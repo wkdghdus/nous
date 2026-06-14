@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.env.*
+.omx/state/
+.omx/logs/
+.omx/metrics.json
+node_modules/
+dist/
+build/
+coverage/
+tmp/

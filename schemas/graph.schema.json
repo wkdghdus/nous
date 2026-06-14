@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/nous/graph.schema.json",
+  "title": "Nous Graph Export",
+  "type": "object",
+  "required": ["schema_version", "nodes", "edges"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "label", "review_status", "evidence"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "artifact",
+            "memory",
+            "value",
+            "belief",
+            "claim",
+            "pattern",
+            "project",
+            "decision",
+            "person",
+            "question",
+            "contradiction",
+            "identity"
+          ]
+        },
+        "label": { "type": "string" },
+        "review_status": {
+          "type": "string",
+          "enum": ["agent_generated", "reviewed", "rejected", "deprecated"]
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "from", "to", "relationship", "review_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "relationship": {
+          "type": "string",
+          "enum": [
+            "evidenced_by",
+            "supports",
+            "contradicts",
+            "influenced_by",
+            "expresses",
+            "mentions",
+            "changed_by",
+            "part_of",
+            "similar_to"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_status": {
+          "type": "string",
+          "enum": ["agent_generated", "reviewed", "rejected", "deprecated"]
+        }
+      }
+    }
+  }
+}
