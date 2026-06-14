@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: belief
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -18,14 +18,16 @@ related: []
 tags: []
 ---
 
-# Claim
+# Belief
 
-## Statement
+## Belief Statement
+
+## Current Confidence
 
 ## Evidence
 
-## Counterevidence
+## Counterevidence or Uncertainty
 
-## Boundaries
+## Change History
 
-## Review Decision
+## Review Notes

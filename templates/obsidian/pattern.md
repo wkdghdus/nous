@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: pattern
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -18,14 +18,14 @@ related: []
 tags: []
 ---
 
-# Claim
+# Pattern
 
-## Statement
+## Pattern Statement
 
-## Evidence
+## Repeated Evidence
 
-## Counterevidence
+## Context Where It Appears
 
-## Boundaries
+## Counterexamples
 
-## Review Decision
+## Review Notes

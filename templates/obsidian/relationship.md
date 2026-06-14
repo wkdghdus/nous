@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: relationship
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -11,21 +11,26 @@ source:
   type:
   path:
   extraction_method:
+relationship:
+  from:
+  to:
+  type:
 interpretation_level: low
 evidence: []
 counterevidence: []
-related: []
 tags: []
 ---
 
-# Claim
+# Relationship
 
-## Statement
+## Relationship Statement
+
+## From
+
+## To
 
 ## Evidence
 
-## Counterevidence
-
-## Boundaries
+## Confidence Rationale
 
 ## Review Decision

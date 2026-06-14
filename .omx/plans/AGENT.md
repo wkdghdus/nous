@@ -5,3 +5,4 @@ Use this directory for durable planning artifacts that should remain available t
 Direct children:
 
 - `initial-repo-scaffold-plan.md` - plan for the initial scaffold-only repository setup.
+- `m1-vault-schema-plan.md` - plan for the first project milestone: vault schema.

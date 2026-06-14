@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: question
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -18,14 +18,14 @@ related: []
 tags: []
 ---
 
-# Claim
+# Question
 
-## Statement
+## Question
 
-## Evidence
+## Why It Matters
 
-## Counterevidence
+## Evidence or Context
 
-## Boundaries
+## Related Notes
 
-## Review Decision
+## Possible Next Review

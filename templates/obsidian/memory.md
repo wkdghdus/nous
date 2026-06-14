@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: memory
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -18,14 +18,16 @@ related: []
 tags: []
 ---
 
-# Claim
+# Memory
 
-## Statement
+## What Happened
 
-## Evidence
+## User Context
 
-## Counterevidence
+## Timeframe
 
-## Boundaries
+## Linked People, Projects, or Themes
 
-## Review Decision
+## Tentative Hypotheses
+
+## Review Notes

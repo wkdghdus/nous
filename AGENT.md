@@ -58,3 +58,4 @@ Nous is a personal self-knowledge system. It turns user-authored text, raw artif
 - `templates/` contains reusable Obsidian note templates and future prompt/template assets.
 - `vault/` contains the empty Obsidian-compatible vault skeleton.
 - `.omx/` contains local workflow state and planning artifacts; runtime logs and state are not product files.
+- `nous_requirements_and_user_flows.md` contains the ground-truth ideation plus functional and technical requirements for this project.

@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: value
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -18,14 +18,14 @@ related: []
 tags: []
 ---
 
-# Claim
+# Value
 
-## Statement
+## Value Statement
 
 ## Evidence
 
-## Counterevidence
+## How It Shows Up
 
-## Boundaries
+## Tensions or Counterevidence
 
-## Review Decision
+## Review Notes

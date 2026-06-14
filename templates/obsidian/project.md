@@ -1,6 +1,6 @@
 ---
 id:
-type: claim
+type: project
 schema_version: "0.1"
 status: draft
 review_status: agent_generated
@@ -18,14 +18,16 @@ related: []
 tags: []
 ---
 
-# Claim
+# Project
 
-## Statement
+## What This Is
 
-## Evidence
+## Source Evidence
 
-## Counterevidence
+## User Motivation
 
-## Boundaries
+## Skills, Values, or Patterns Expressed
 
-## Review Decision
+## Open Questions
+
+## Review Notes

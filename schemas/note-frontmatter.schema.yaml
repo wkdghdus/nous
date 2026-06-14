@@ -1,31 +1,95 @@
 schema_version: "0.1"
+description: "Draft frontmatter contract for Nous Obsidian notes."
+
 required_fields:
-  - id
-  - type
-  - status
-  - review_status
-  - created
-  - source
-note_types:
-  - artifact
-  - memory
-  - value
-  - belief
-  - claim
-  - pattern
-  - project
-  - decision
-  - person
-  - question
-  - contradiction
-  - identity
-review_statuses:
-  - agent_generated
-  - reviewed
-  - rejected
-  - deprecated
-source:
-  required_fields:
-    - type
-    - path
-    - extraction_method
+  id:
+    type: string
+    description: "Stable graph-safe identifier. Do not change after review unless migrated."
+  type:
+    type: enum
+    values:
+      - artifact
+      - memory
+      - value
+      - belief
+      - claim
+      - pattern
+      - project
+      - decision
+      - person
+      - question
+      - contradiction
+      - identity
+      - relationship
+  schema_version:
+    type: string
+    value: "0.1"
+  status:
+    type: enum
+    values:
+      - draft
+      - active
+      - archived
+  review_status:
+    type: enum
+    values:
+      - agent_generated
+      - needs_review
+      - reviewed
+      - rejected
+      - deprecated
+  created:
+    type: date
+    format: YYYY-MM-DD
+  updated:
+    type: date
+    format: YYYY-MM-DD
+  source:
+    type: object
+    required_fields:
+      type:
+        type: enum
+        values:
+          - text
+          - writing
+          - image
+          - project
+          - note
+          - manual
+      path:
+        type: string
+      extraction_method:
+        type: enum
+        values:
+          - manual
+          - archivist_agent
+          - import
+
+optional_fields:
+  confidence:
+    type: number
+    minimum: 0
+    maximum: 1
+  interpretation_level:
+    type: enum
+    values:
+      - none
+      - low
+      - medium
+      - high
+  evidence:
+    type: list
+    item_fields:
+      id: string
+      path: string
+  counterevidence:
+    type: list
+    item_fields:
+      id: string
+      path: string
+  related:
+    type: list
+    item_type: string
+  tags:
+    type: list
+    item_type: string

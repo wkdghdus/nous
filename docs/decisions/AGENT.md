@@ -5,3 +5,4 @@ Use this directory for architecture decision records and product tradeoff notes 
 Direct children:
 
 - `.gitkeep` - keeps the directory present until decision records are added.
+- `0001-vault-schema-first.md` - decision to define the vault schema before application code.

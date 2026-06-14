@@ -3,11 +3,16 @@
   "$id": "https://example.local/nous/graph.schema.json",
   "title": "Nous Graph Export",
   "type": "object",
-  "required": ["schema_version", "nodes", "edges"],
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "nodes", "edges"],
   "properties": {
     "schema_version": {
       "type": "string",
       "const": "0.1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
     },
     "nodes": {
       "type": "array",
@@ -23,11 +28,25 @@
     }
   },
   "$defs": {
+    "review_status": {
+      "type": "string",
+      "enum": ["agent_generated", "needs_review", "reviewed", "rejected", "deprecated"]
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 }
+      }
+    },
     "node": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["id", "type", "label", "review_status", "evidence"],
       "properties": {
-        "id": { "type": "string" },
+        "id": { "type": "string", "minLength": 1 },
         "type": {
           "type": "string",
           "enum": [
@@ -45,24 +64,29 @@
             "identity"
           ]
         },
-        "label": { "type": "string" },
-        "review_status": {
-          "type": "string",
-          "enum": ["agent_generated", "reviewed", "rejected", "deprecated"]
+        "label": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string" },
+        "review_status": { "$ref": "#/$defs/review_status" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         },
         "evidence": {
           "type": "array",
-          "items": { "type": "string" }
-        }
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        },
+        "source_path": { "type": "string" }
       }
     },
     "edge": {
       "type": "object",
-      "required": ["id", "from", "to", "relationship", "review_status"],
+      "additionalProperties": false,
+      "required": ["id", "from", "to", "relationship", "review_status", "evidence"],
       "properties": {
-        "id": { "type": "string" },
-        "from": { "type": "string" },
-        "to": { "type": "string" },
+        "id": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
         "relationship": {
           "type": "string",
           "enum": [
@@ -82,9 +106,10 @@
           "minimum": 0,
           "maximum": 1
         },
-        "review_status": {
-          "type": "string",
-          "enum": ["agent_generated", "reviewed", "rejected", "deprecated"]
+        "review_status": { "$ref": "#/$defs/review_status" },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_ref" }
         }
       }
     }

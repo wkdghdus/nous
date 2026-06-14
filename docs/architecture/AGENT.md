@@ -5,3 +5,4 @@ Use this directory for system boundaries, data-flow sketches, architecture notes
 Direct children:
 
 - `.gitkeep` - keeps the directory present until architecture docs are added.
+- `vault-schema.md` - first usable vault lifecycle, metadata, and review contract.
