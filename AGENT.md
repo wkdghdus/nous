@@ -55,6 +55,7 @@ Nous is a personal self-knowledge system. It turns user-authored text, raw artif
 
 - `docs/` contains planning, architecture, and decision records.
 - `schemas/` contains versioned data-shape drafts for notes, graph records, and exports.
+- `scripts/` contains dependency-free repository maintenance scripts.
 - `templates/` contains reusable Obsidian note templates and future prompt/template assets.
 - `vault/` contains the empty Obsidian-compatible vault skeleton.
 - `.omx/` contains local workflow state and planning artifacts; runtime logs and state are not product files.

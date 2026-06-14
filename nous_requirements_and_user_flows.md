@@ -477,43 +477,43 @@ conflict handling.
 
 # 9. Suggested Vault Structure
 
-/Nous  
-/00 Raw Artifacts  
-/Audio  
-/Photos  
-/Writing  
-/Projects  
-/Screenshots  
-/Chats  
-/Transcripts  
-/01 Agent Inbox  
-/Unreviewed Memories  
-/Unreviewed Beliefs  
-/Unreviewed Claims  
-/Unreviewed Links  
-/02 Notes  
-/Memories  
-/Values  
-/Beliefs  
-/Decisions  
-/People  
-/Projects  
-/Patterns  
-/Questions  
-/Contradictions  
-/03 Canonical Model  
-/Claims  
-/Core Values  
-/Identity  
-/Current Goals  
-/Life Timeline  
-/04 Generated  
-Nous.md  
-Knowledge Graph.json  
-Timeline.md  
-Contradiction Map.md  
-Clone Context.md  
-/99 Future Modules  
+/Nous
+/00 Raw Artifacts
+/Audio
+/Photos
+/Writing
+/Projects
+/Screenshots
+/Chats
+/Transcripts
+/01 Agent Inbox
+/Unreviewed Memories
+/Unreviewed Beliefs
+/Unreviewed Claims
+/Unreviewed Links
+/02 Notes
+/Memories
+/Values
+/Beliefs
+/Decisions
+/People
+/Projects
+/Patterns
+/Questions
+/Contradictions
+/03 Canonical Model
+/Claims
+/Core Values
+/Identity
+/Current Goals
+/Life Timeline
+/04 Generated
+Nous.md
+Knowledge Graph.json
+Timeline.md
+Contradiction Map.md
+Clone Context.md
+/99 Future Modules
 Interpersonal Graph.md
 
 # 10. MVP Milestones
@@ -556,36 +556,36 @@ Interpersonal Graph.md
 
 ## 12.1 Generated Note Frontmatter
 
----  
-type: belief  
-schema_version: 0.1  
-status: draft  
-review_status: agent_generated  
-confidence: medium  
-created: 2026-06-06  
-source:  
-type: transcript  
-path: 00 Raw Artifacts/Transcripts/2026-06-06-reflection.md  
-extraction:  
-method: archivist_agent  
-interpretation_level: low  
-related_values: \[\]  
-related_memories: \[\]  
+---
+type: belief
+schema_version: 0.1
+status: draft
+review_status: agent_generated
+confidence: medium
+created: 2026-06-06
+source:
+type: transcript
+path: 00 Raw Artifacts/Transcripts/2026-06-06-reflection.md
+extraction:
+method: archivist_agent
+interpretation_level: low
+related_values: \[\]
+related_memories: \[\]
 ---
 
 ## 12.2 Claim Object
 
-{  
-"id": "claim_0001",  
-"type": "claim",  
-"claim_type": "pattern",  
+{
+"id": "claim_0001",
+"type": "claim",
+"claim_type": "pattern",
 "statement": "I tend to turn personal problems into systems-building
-projects.",  
-"confidence": 0.72,  
-"status": "agent_generated",  
+projects.",
+"confidence": 0.72,
+"status": "agent_generated",
 "evidence": \["Project - Nous", "Reflection - Preserving parts of
-myself"\],  
-"counterevidence": \[\],  
-"first_seen": "2026-06-06",  
-"last_updated": "2026-06-06"  
+myself"\],
+"counterevidence": \[\],
+"first_seen": "2026-06-06",
+"last_updated": "2026-06-06"
 }

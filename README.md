@@ -15,6 +15,15 @@ No application project has been created yet.
 
 - `docs/` - product, architecture, and decision records.
 - `schemas/` - machine-readable schema drafts for notes and graph data.
+- `scripts/` - dependency-free repository maintenance scripts.
 - `templates/` - Obsidian note templates and future prompt/template assets.
 - `vault/` - empty Obsidian-compatible vault skeleton for raw, inbox, reviewed, canonical, and generated content.
 - `.omx/` - local OMX workflow state and plans; runtime logs/state are ignored.
+
+## Checks
+
+Run the repository lint with:
+
+```sh
+make lint
+```
