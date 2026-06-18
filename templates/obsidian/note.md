@@ -1,6 +1,6 @@
 ---
 id:
-type:
+type: note
 schema_version: "0.1"
 status: draft
 review_status: agent_generated

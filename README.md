@@ -22,8 +22,24 @@ No application project has been created yet.
 
 ## Checks
 
+Run the ingestion regression tests with:
+
+```sh
+make test
+```
+
 Run the repository lint with:
 
 ```sh
 make lint
 ```
+
+## Basic Text Ingestion
+
+Import a local UTF-8 text or Markdown file with:
+
+```sh
+ruby scripts/ingest_text.rb path/to/source.txt
+```
+
+The command writes a raw artifact note to `vault/00_raw_artifacts/text/` and a reviewable draft note to `vault/01_agent_inbox/notes/`. Repeated imports create suffixed filenames instead of overwriting existing notes. The MVP ingestion path is text-only and does not process voice, audio, dictation, or transcript-specific data.

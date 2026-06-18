@@ -9,6 +9,7 @@ required_fields:
     type: enum
     values:
       - artifact
+      - note
       - memory
       - value
       - belief
