@@ -32,7 +32,9 @@ This document defines the first usable Nous vault contract. It is intentionally 
 | `vault/01_agent_inbox/claims/` | Candidate claims awaiting review. | Non-canonical |
 | `vault/01_agent_inbox/relationships/` | Candidate graph relationships awaiting review. | Non-canonical |
 | `vault/02_notes/` | Reviewed notes grouped by type. | Reviewed |
-| `vault/03_canonical_model/` | Accepted claims, identity records, values, goals, and timeline entries. | Canonical |
+| `vault/03_canonical_model/claims/` | Accepted source-backed claims. | Canonical |
+| `vault/03_canonical_model/relationships/` | Accepted source-backed graph relationships. | Canonical |
+| `vault/03_canonical_model/` | Accepted claims, relationships, identity records, values, goals, and timeline entries. | Canonical |
 | `vault/04_generated/` | Regenerable reports and graph exports. | Derived |
 
 ## Stable ID Format
@@ -87,6 +89,27 @@ counterevidence: []
 | `rejected` | Preserved for audit but excluded from normal generated outputs. |
 | `deprecated` | Formerly useful but superseded by newer information. |
 
+## Review Decisions
+
+Review decisions are recorded in item frontmatter under a reusable `review` object:
+
+```yaml
+review:
+  decision: approved
+  decided_at: "2026-06-28T21:00:00Z"
+  reviewer_note:
+  merged_into:
+```
+
+Decision transitions:
+
+- `approve` sets `review_status: reviewed`, `status: active`, refreshes `updated`, and moves the file to its reviewed or canonical destination.
+- `reject` sets `review_status: rejected`, `status: archived`, refreshes `updated`, and leaves the source file in place for audit.
+- `deprecate` sets `review_status: deprecated`, `status: archived`, refreshes `updated`, and leaves the source file in place for audit.
+- `merge` records `review.decision: merged`, `review.merged_into`, sets the source `status: archived`, and appends source evidence to the merge target without deleting the source.
+
+Inbox notes are generic `type: note`; approving a note must include an explicit reviewed note type so it can move to the matching `vault/02_notes/<type>/` directory. Claims move to `vault/03_canonical_model/claims/`. Relationships move to `vault/03_canonical_model/relationships/`.
+
 ## Interpretation Levels
 
 | Level | Use |
@@ -98,7 +121,7 @@ counterevidence: []
 
 ## Relationship Records
 
-Relationship notes represent reviewable graph edges. They should name source and target IDs, relationship type, confidence, evidence, and review status. Generated edges start in `vault/01_agent_inbox/relationships/`.
+Relationship notes represent reviewable graph edges. They should name source and target IDs, relationship type, confidence, evidence, and review status. Generated edges start in `vault/01_agent_inbox/relationships/`; approved edges move to `vault/03_canonical_model/relationships/`.
 
 Allowed MVP relationship types:
 

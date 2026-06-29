@@ -5,3 +5,4 @@ lint:
 
 test:
 	ruby scripts/test_ingest_text.rb
+	ruby scripts/test_review_queue.rb

@@ -43,3 +43,29 @@ ruby scripts/ingest_text.rb path/to/source.txt
 ```
 
 The command writes a raw artifact note to `vault/00_raw_artifacts/text/` and a reviewable draft note to `vault/01_agent_inbox/notes/`. Repeated imports create suffixed filenames instead of overwriting existing notes. The MVP ingestion path is text-only and does not process voice, audio, dictation, or transcript-specific data.
+
+## Review Queue
+
+List pending generated notes, claims, and relationships with:
+
+```sh
+ruby scripts/review_queue.rb list
+```
+
+Inspect an item without mutating it:
+
+```sh
+ruby scripts/review_queue.rb show vault/01_agent_inbox/notes/example.md
+```
+
+Approve inbox notes with an explicit reviewed type:
+
+```sh
+ruby scripts/review_queue.rb approve vault/01_agent_inbox/notes/example.md --as memory
+```
+
+Approve claims and relationships without `--as`; they move to `vault/03_canonical_model/claims/` and `vault/03_canonical_model/relationships/`. Reject, deprecate, or merge items in place with `reject`, `deprecate`, and `merge --into PATH`; merge targets must already live under `vault/02_notes/` or `vault/03_canonical_model/`. Each decision records review metadata and keeps audit history on disk. Regenerate the Obsidian queue view with:
+
+```sh
+ruby scripts/review_queue.rb report
+```

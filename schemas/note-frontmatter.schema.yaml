@@ -94,3 +94,21 @@ optional_fields:
   tags:
     type: list
     item_type: string
+  review:
+    type: object
+    description: "Reusable review decision metadata for approved, rejected, deprecated, or merged records."
+    optional_fields:
+      decision:
+        type: enum
+        values:
+          - approved
+          - rejected
+          - deprecated
+          - merged
+      decided_at:
+        type: datetime
+        format: ISO-8601
+      reviewer_note:
+        type: string
+      merged_into:
+        type: string

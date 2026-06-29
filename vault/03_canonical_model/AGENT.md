@@ -5,6 +5,7 @@ Only reviewed or intentionally accepted material belongs here. Future assistants
 Direct children:
 
 - `claims/` - accepted source-backed claims.
+- `relationships/` - accepted source-backed graph relationships.
 - `identity/` - curated identity and self-concept records.
 - `core_values/` - curated core value records.
 - `goals/` - current goals and active direction.
