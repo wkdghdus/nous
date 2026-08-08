@@ -81,3 +81,17 @@ ruby scripts/export_graph.rb
 By default, the command writes `vault/04_generated/graph/nous_graph.json`. The export is reviewed-only: it reads reviewed notes from `vault/02_notes/`, canonical claims from `vault/03_canonical_model/claims/`, and canonical relationships from `vault/03_canonical_model/relationships/`. Inbox records are excluded until a reviewer accepts them.
 
 Use `--vault-root PATH` for fixture or alternate vault roots, and `--output PATH` to choose a different JSON destination.
+
+## Nous Report
+
+Generate the reviewed Nous summary with:
+
+```sh
+ruby scripts/generate_nous_report.rb
+```
+
+By default, the command writes `vault/04_generated/reports/nous.md`. Use `--vault-root PATH` for fixture or alternate vault roots, and `--output PATH` to choose a different Markdown destination.
+
+The report is regenerable and reviewed-only. It reads reviewed notes from `vault/02_notes/`, canonical claims from `vault/03_canonical_model/claims/`, and canonical relationships from `vault/03_canonical_model/relationships/`. Inbox, rejected, deprecated, archived, and unsupported records are excluded.
+
+The report is a source-backed summary, not a new interpretation. It can quote or excerpt reviewed records, but it does not add unsupported psychological conclusions.

@@ -149,6 +149,14 @@ Inbox records under `vault/01_agent_inbox/` are excluded from the default export
 
 Graph node labels are deterministic: first Markdown H1, then frontmatter `title`, then the stable record ID. Node summaries are deterministic excerpts from the first non-empty non-heading body line, bounded to 240 characters. Graph node `source_path` points to the reviewed or canonical Markdown record path inside the vault; evidence refs carry source artifact or note provenance from frontmatter.
 
+## Nous Report
+
+The M5 Nous report is a deterministic, regenerable Markdown summary written to `vault/04_generated/reports/nous.md` by default. It is reviewed-only and source-backed: it reads reviewed notes from `vault/02_notes/`, canonical claims from `vault/03_canonical_model/claims/`, and canonical relationships from `vault/03_canonical_model/relationships/`.
+
+The report command accepts `--vault-root PATH` for fixture or alternate vault roots and `--output PATH` for a different Markdown destination. It may quote or excerpt reviewed records, but it must not introduce new psychological conclusions, hidden inferences, or unsupported certainty beyond the source records.
+
+Inbox, rejected, deprecated, archived, and unsupported records are excluded from the default report. Relationship context is only shown when both endpoints resolve to included report entries.
+
 ## Manual M1 Done Check
 
 - A raw text artifact can be recorded with `templates/obsidian/artifact.md`.
@@ -156,3 +164,4 @@ Graph node labels are deterministic: first Markdown H1, then frontmatter `title`
 - A claim can cite evidence and counterevidence.
 - A relationship can connect two note IDs with confidence and review status.
 - A graph export can represent the same IDs and relationships using `schemas/graph.schema.json`.
+- A Nous report can represent reviewed records and canonical support without adding unsupported interpretation.
