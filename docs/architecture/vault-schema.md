@@ -135,6 +135,20 @@ Allowed MVP relationship types:
 - `part_of`
 - `similar_to`
 
+## Graph Export
+
+The M4 graph export is a deterministic, reviewed-only JSON projection written to `vault/04_generated/graph/nous_graph.json` by default. It is generated from accepted Markdown records and does not keep separate graph state.
+
+Default export sources:
+
+- Reviewed notes in direct child directories of `vault/02_notes/`.
+- Reviewed canonical claims in `vault/03_canonical_model/claims/`.
+- Reviewed canonical relationships in `vault/03_canonical_model/relationships/`.
+
+Inbox records under `vault/01_agent_inbox/` are excluded from the default export even when their frontmatter resembles reviewed records. Rejected, deprecated, archived, pending, duplicate, unsupported, or dangling records must not appear as active graph records.
+
+Graph node labels are deterministic: first Markdown H1, then frontmatter `title`, then the stable record ID. Node summaries are deterministic excerpts from the first non-empty non-heading body line, bounded to 240 characters. Graph node `source_path` points to the reviewed or canonical Markdown record path inside the vault; evidence refs carry source artifact or note provenance from frontmatter.
+
 ## Manual M1 Done Check
 
 - A raw text artifact can be recorded with `templates/obsidian/artifact.md`.

@@ -69,3 +69,15 @@ Approve claims and relationships without `--as`; they move to `vault/03_canonica
 ```sh
 ruby scripts/review_queue.rb report
 ```
+
+## Graph Export
+
+Export reviewed graph records with:
+
+```sh
+ruby scripts/export_graph.rb
+```
+
+By default, the command writes `vault/04_generated/graph/nous_graph.json`. The export is reviewed-only: it reads reviewed notes from `vault/02_notes/`, canonical claims from `vault/03_canonical_model/claims/`, and canonical relationships from `vault/03_canonical_model/relationships/`. Inbox records are excluded until a reviewer accepts them.
+
+Use `--vault-root PATH` for fixture or alternate vault roots, and `--output PATH` to choose a different JSON destination.

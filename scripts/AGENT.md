@@ -4,8 +4,10 @@ Use this directory for dependency-free repository maintenance scripts. Do not ad
 
 Direct children:
 
+- `export_graph.rb` - dependency-free graph export CLI for reviewed/canonical vault records.
 - `ingest_text.rb` - dependency-free text/Markdown ingestion into raw artifact and inbox draft notes.
 - `lint.sh` - repository lint for schemas, text hygiene, signposts, and scaffold boundaries.
 - `review_queue.rb` - dependency-free review queue CLI for inbox notes, claims, and relationships.
+- `test_export_graph.rb` - dependency-free regression tests for graph export behavior.
 - `test_ingest_text.rb` - dependency-free regression tests for text ingestion behavior.
 - `test_review_queue.rb` - dependency-free regression tests for review queue state transitions.
