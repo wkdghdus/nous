@@ -157,6 +157,29 @@ The report command accepts `--vault-root PATH` for fixture or alternate vault ro
 
 Inbox, rejected, deprecated, archived, and unsupported records are excluded from the default report. Relationship context is only shown when both endpoints resolve to included report entries.
 
+## M6 Raw Artifact Imports
+
+M6 expands the raw-artifact area into paired payload and provenance directories for supported writing, image, and project imports.
+
+Type directories use the same split:
+
+- `vault/00_raw_artifacts/writing/files/` holds copied writing payloads.
+- `vault/00_raw_artifacts/writing/notes/` holds artifact records for those copied payloads.
+- `vault/00_raw_artifacts/images/files/` holds copied image payloads.
+- `vault/00_raw_artifacts/images/notes/` holds artifact records for those copied payloads.
+- `vault/00_raw_artifacts/projects/files/` holds copied project payloads.
+- `vault/00_raw_artifacts/projects/notes/` holds artifact records for those copied payloads.
+
+The copied payload is the immutable source of record. The importer never renames, rewrites, deletes, or changes the permissions of the external original, and the artifact record uses the vault-relative copied payload path rather than the external absolute source path.
+
+Artifact provenance can record the original filename, SHA-256 digest, and byte count as optional audit metadata on the `source` object. The copied payload path, original filename, digest, and byte count together make the import portable and auditable without exposing workstation-specific absolute paths.
+
+Collision handling is additive: one shared suffix is chosen for the payload copy, artifact note, and inbox note so the emitted paths stay aligned. Existing files are never overwritten.
+
+Binary and image imports stay metadata-only. They may record user-authored context, represented date, and import date, but they do not infer visible content, identity, emotion, or theme from the payload itself. Observed content remains empty unless the source is a supported text-like file and the importer can extract bounded source-backed facts.
+
+The generated inbox note points to the artifact record, not directly to the copied payload. Review, graph export, and report generation continue to operate on reviewed or canonical Markdown records rather than raw payload files.
+
 ## Manual M1 Done Check
 
 - A raw text artifact can be recorded with `templates/obsidian/artifact.md`.

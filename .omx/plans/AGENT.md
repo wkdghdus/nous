@@ -10,9 +10,12 @@ Direct children:
 - `m3-review-queue-plan.md` - plan for the third project milestone: review queue.
 - `m4-graph-export-plan.md` - plan for the fourth project milestone: graph export.
 - `m5-nous-report-plan.md` - plan for the fifth project milestone: Nous report.
+- `m6-raw-artifact-expansion-plan.md` - plan for the sixth project milestone: portable writing, image, and project artifact imports.
 - `prd-m3-review-queue.md` - Ralph PRD artifact for M3 review queue implementation.
 - `prd-m4-graph-export.md` - Ralph PRD artifact for M4 graph export implementation.
 - `prd-m5-nous-report.md` - Ralph PRD artifact for M5 Nous report implementation.
+- `prd-m6-raw-artifact-expansion.md` - Ralph PRD artifact for M6 raw artifact expansion implementation.
 - `test-spec-m3-review-queue.md` - Ralph test specification for M3 review queue implementation.
 - `test-spec-m4-graph-export.md` - Ralph test specification for M4 graph export implementation.
 - `test-spec-m5-nous-report.md` - Ralph test specification for M5 Nous report implementation.
+- `test-spec-m6-raw-artifact-expansion.md` - Ralph test specification for M6 raw artifact expansion implementation.

@@ -10,6 +10,10 @@ source:
   type:
   path:
   extraction_method: manual
+  original_filename:
+  sha256:
+  bytes:
+  represented_date:
 interpretation_level: none
 tags: []
 ---
@@ -18,8 +22,11 @@ tags: []
 
 ## Source Metadata
 
-- Source path:
+- Copied payload path:
+- Original filename:
 - Source type:
+- Source SHA-256:
+- Source bytes:
 - Date represented:
 - Import date:
 

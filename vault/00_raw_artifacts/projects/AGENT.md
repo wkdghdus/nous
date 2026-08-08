@@ -4,4 +4,6 @@ Use this directory for project evidence such as READMEs, design docs, summaries,
 
 Direct children:
 
+- `files/` - copied project payloads kept as immutable evidence.
+- `notes/` - artifact notes and provenance records for imported project payloads.
 - `.gitkeep` - keeps the directory present until artifacts are added.

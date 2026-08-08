@@ -65,6 +65,17 @@ required_fields:
           - manual
           - archivist_agent
           - import
+    optional_fields:
+      original_filename:
+        type: string
+      sha256:
+        type: string
+      bytes:
+        type: integer
+        minimum: 0
+      represented_date:
+        type: date
+        format: YYYY-MM-DD
 
 optional_fields:
   confidence:
