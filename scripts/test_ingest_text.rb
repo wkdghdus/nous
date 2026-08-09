@@ -20,6 +20,34 @@ def assert(condition, message)
   raise message unless condition
 end
 
+def assert_success(status, stderr)
+  assert(status.success?, "expected import to pass: #{stderr}")
+end
+
+def assert_failure(status, stderr, expected, context)
+  assert(!status.success?, "#{context} should fail")
+  assert(stderr.include?(expected), "#{context} error should include #{expected.inspect}, got #{stderr.inspect}")
+end
+
+def output_path(stdout, key)
+  line = stdout.lines.find { |candidate| candidate.start_with?("#{key}: ") }
+  raise "missing #{key} output line in #{stdout.inspect}" if line.nil?
+
+  Pathname(line.split(": ", 2).last.strip)
+end
+
+def assert_no_repo_vault_writes
+  repo_vault = ROOT + "vault"
+  return unless repo_vault.directory?
+
+  markers = ["Evening Reflection", "artifact_#{TEST_DATE}_source", "note_#{TEST_DATE}_source"]
+  leaked = repo_vault.find.select(&:file?).select do |path|
+    text = path.binread
+    markers.any? { |marker| path.to_s.include?(marker) || text.include?(marker) }
+  end
+  assert(leaked.empty?, "ingest_text fixtures leaked into repo vault: #{leaked.map(&:to_s).inspect}")
+end
+
 def frontmatter(path)
   text = path.read
   match = text.match(/\A---\n(.*?)\n---\n/m)
@@ -42,10 +70,10 @@ def assert_successful_import(tmpdir, extension, vault_name)
 
   vault = tmpdir + vault_name
   stdout, stderr, status = run_ingest(source, vault)
-  assert(status.success?, "expected import to pass: #{stderr}")
+  assert_success(status, stderr)
 
-  artifact_path = Pathname(stdout.lines.find { |line| line.start_with?("artifact: ") }.split(": ", 2).last.strip)
-  note_path = Pathname(stdout.lines.find { |line| line.start_with?("draft_note: ") }.split(": ", 2).last.strip)
+  artifact_path = output_path(stdout, "artifact")
+  note_path = output_path(stdout, "draft_note")
 
   assert(artifact_path.file?, "artifact note was not created")
   assert(note_path.file?, "draft note was not created")
@@ -97,44 +125,37 @@ Dir.mktmpdir("nous-ingest-test-") do |dir|
   vault = tmpdir + "duplicate-vault"
   first_stdout, first_stderr, first_status = run_ingest(duplicate_source, vault)
   second_stdout, second_stderr, second_status = run_ingest(duplicate_source, vault)
-  assert(first_status.success?, "first duplicate import failed: #{first_stderr}")
-  assert(second_status.success?, "second duplicate import failed: #{second_stderr}")
-  first_artifact = first_stdout.lines.find { |line| line.start_with?("artifact: ") }
-  second_artifact = second_stdout.lines.find { |line| line.start_with?("artifact: ") }
-  first_note = first_stdout.lines.find { |line| line.start_with?("draft_note: ") }
-  second_note = second_stdout.lines.find { |line| line.start_with?("draft_note: ") }
-  assert(first_artifact.include?("artifact_#{TEST_DATE}_duplicate.md"), "first duplicate path is wrong")
-  assert(second_artifact.include?("artifact_#{TEST_DATE}_duplicate-2.md"), "second duplicate path is wrong")
-  assert(first_note.include?("note_#{TEST_DATE}_duplicate.md"), "first duplicate draft path is wrong")
-  assert(second_note.include?("note_#{TEST_DATE}_duplicate-2.md"), "second duplicate draft path is wrong")
+  assert_success(first_status, first_stderr)
+  assert_success(second_status, second_stderr)
+  assert(output_path(first_stdout, "artifact").basename.to_s == "artifact_#{TEST_DATE}_duplicate.md", "first duplicate path is wrong")
+  assert(output_path(second_stdout, "artifact").basename.to_s == "artifact_#{TEST_DATE}_duplicate-2.md", "second duplicate path is wrong")
+  assert(output_path(first_stdout, "draft_note").basename.to_s == "note_#{TEST_DATE}_duplicate.md", "first duplicate draft path is wrong")
+  assert(output_path(second_stdout, "draft_note").basename.to_s == "note_#{TEST_DATE}_duplicate-2.md", "second duplicate draft path is wrong")
 
   empty_source = tmpdir + "empty.txt"
   empty_source.write("  \n")
   _stdout, stderr, status = run_ingest(empty_source, tmpdir + "empty-vault")
-  assert(!status.success?, "empty source should fail")
-  assert(stderr.include?("source file is empty"), "empty source error is not actionable")
+  assert_failure(status, stderr, "source file is empty", "empty source")
 
   unsupported_source = tmpdir + "capture.pdf"
   unsupported_source.write("not text")
   _stdout, stderr, status = run_ingest(unsupported_source, tmpdir + "unsupported-vault")
-  assert(!status.success?, "unsupported extension should fail")
-  assert(stderr.include?("unsupported source extension"), "unsupported extension error is not actionable")
+  assert_failure(status, stderr, "unsupported source extension", "unsupported extension")
 
   invalid_source = tmpdir + "invalid.txt"
   invalid_source.binwrite("\xFF")
   _stdout, stderr, status = run_ingest(invalid_source, tmpdir + "invalid-vault")
-  assert(!status.success?, "invalid UTF-8 source should fail")
-  assert(stderr.include?("source file must be valid UTF-8"), "invalid UTF-8 error is not actionable")
+  assert_failure(status, stderr, "source file must be valid UTF-8", "invalid UTF-8 source")
 
   _stdout, stderr, status = run_ingest(tmpdir + "missing.txt", tmpdir + "missing-vault")
-  assert(!status.success?, "missing source should fail")
-  assert(stderr.include?("source path does not exist"), "missing source error is not actionable")
+  assert_failure(status, stderr, "source path does not exist", "missing source")
 
   directory_source = tmpdir + "directory.md"
   directory_source.mkdir
   _stdout, stderr, status = run_ingest(directory_source, tmpdir + "directory-vault")
-  assert(!status.success?, "directory source should fail")
-  assert(stderr.include?("source path is a directory"), "directory source error is not actionable")
+  assert_failure(status, stderr, "source path is a directory", "directory source")
+
+  assert_no_repo_vault_writes
 end
 
 puts "ingest_text tests ok"

@@ -8,9 +8,11 @@ require "psych"
 require "shellwords"
 require "time"
 
+$LOAD_PATH.unshift((Pathname(__dir__).parent + "lib").to_s)
+require "nous"
+
 ROOT = Pathname(__dir__).parent.expand_path
 DEFAULT_VAULT_ROOT = ROOT + "vault"
-PENDING_REVIEW_STATUSES = ["agent_generated", "needs_review"].freeze
 
 INBOX_DIRS = {
   "note" => "01_agent_inbox/notes",
@@ -30,12 +32,6 @@ NOTE_TYPE_DIRS = {
   "contradiction" => "contradictions"
 }.freeze
 
-KIND_PRIORITY = {
-  "claim" => 10,
-  "relationship" => 20,
-  "note" => 30
-}.freeze
-
 MERGE_TARGET_PREFIXES = ["02_notes/", "03_canonical_model/"].freeze
 MERGE_TARGET_ERROR = "merge target must be inside vault/02_notes or vault/03_canonical_model"
 
@@ -43,54 +39,7 @@ class ReviewError < StandardError; end
 
 Options = Struct.new(:vault_root, :sort, :note_type, :reviewer_note, :merge_target, :output_path, keyword_init: true)
 
-Item = Struct.new(:path, :relative_path, :kind, :frontmatter, :body, keyword_init: true) do
-  def review_status
-    value(frontmatter["review_status"])
-  end
-
-  def created
-    value(frontmatter["created"])
-  end
-
-  def confidence
-    raw = frontmatter["confidence"]
-    return nil if raw.nil? || raw == ""
-
-    Float(raw)
-  rescue ArgumentError, TypeError
-    nil
-  end
-
-  def priority
-    manual = frontmatter["priority"]
-    return Integer(manual) unless manual.nil? || manual == ""
-
-    confidence_penalty = confidence.nil? ? 10 : ((1.0 - confidence) * 10).round
-    KIND_PRIORITY.fetch(kind, 90) + confidence_penalty
-  rescue ArgumentError, TypeError
-    KIND_PRIORITY.fetch(kind, 90) + 10
-  end
-
-  def evidence_paths
-    paths = []
-    evidence = frontmatter["evidence"]
-    if evidence.is_a?(Array)
-      evidence.each do |entry|
-        next unless entry.is_a?(Hash) && entry["path"]
-
-        paths << value(entry["path"])
-      end
-    end
-
-    source = frontmatter["source"]
-    paths << value(source["path"]) if source.is_a?(Hash) && source["path"]
-    paths.uniq
-  end
-
-  def value(raw)
-    raw.nil? ? "" : raw.to_s
-  end
-end
+Item = Struct.new(:path, :relative_path, :kind, :frontmatter, :body, keyword_init: true)
 
 def parse_options(command, argv)
   options = Options.new(vault_root: DEFAULT_VAULT_ROOT, sort: "priority")
@@ -240,75 +189,12 @@ def load_item(path, vault_root)
   )
 end
 
-def inbox_items(vault_root)
-  INBOX_DIRS.flat_map do |kind, directory|
-    inbox = vault_root + directory
-    next [] unless inbox.directory?
-
-    inbox.children.select { |path| path.file? && path.extname == ".md" && path.basename.to_s != "AGENT.md" }.map do |path|
-      frontmatter, body = parse_frontmatter(path)
-      Item.new(
-        path: path,
-        relative_path: relative_or_absolute(path, vault_root),
-        kind: kind,
-        frontmatter: frontmatter,
-        body: body
-      )
-    end
-  end
-end
-
-def pending_item?(item)
-  PENDING_REVIEW_STATUSES.include?(item.review_status) && item.frontmatter["status"].to_s != "archived"
-end
-
-def sorted_items(items, sort)
-  case sort
-  when "priority"
-    items.sort_by { |item| [item.priority, item.created, item.relative_path] }
-  when "created"
-    items.sort_by { |item| [item.created, item.relative_path] }
-  when "confidence"
-    items.sort_by { |item| [item.confidence.nil? ? 1 : 0, -(item.confidence || 0), item.relative_path] }
-  else
-    raise ReviewError, "unsupported sort field: #{sort}"
-  end
-end
-
 def list_items(options)
-  items = sorted_items(inbox_items(options.vault_root).select { |item| pending_item?(item) }, options.sort)
-  puts "priority\tkind\tpath\treview_status\tcreated\tconfidence\tevidence"
-  items.each do |item|
-    puts [
-      item.priority,
-      item.kind,
-      item.relative_path,
-      item.review_status,
-      item.created,
-      item.confidence.nil? ? "" : item.confidence,
-      item.evidence_paths.join(", ")
-    ].join("\t")
-  end
+  print Nous::Review.render_list(Nous::Review.list(vault_root: options.vault_root, sort: options.sort))
 end
 
 def show_item(path, options)
-  item = load_item(path, options.vault_root)
-  puts "Path: #{item.relative_path}"
-  puts "Kind: #{item.kind}"
-  puts "Review status: #{item.review_status}"
-  puts "Created: #{item.created}"
-  puts "Confidence: #{item.confidence}" unless item.confidence.nil?
-  puts "Evidence:"
-  if item.evidence_paths.empty?
-    puts "- (none)"
-  else
-    item.evidence_paths.each { |evidence_path| puts "- #{evidence_path}" }
-  end
-  puts
-  puts "--- Frontmatter ---"
-  puts yaml_frontmatter(item.frontmatter).rstrip
-  puts "--- Body ---"
-  puts item.body.rstrip
+  print Nous::Review.render_show(Nous::Review.show(path: path, vault_root: options.vault_root))
 end
 
 def review_timestamp
@@ -475,40 +361,11 @@ def report_path(options)
   options.vault_root + "04_generated/reports/review_queue.md"
 end
 
-def markdown_cell(value)
-  value.to_s.gsub("|", "\\|")
-end
-
 def generate_report(options)
   timestamp = review_timestamp
-  items = sorted_items(inbox_items(options.vault_root).select { |item| pending_item?(item) }, "priority")
   path = report_path(options)
-  lines = [
-    "# Review Queue",
-    "",
-    "- Generated: #{timestamp}",
-    "- Pending items: #{items.length}",
-    "",
-    "| Priority | Kind | Created | Confidence | Status | Path | Evidence |",
-    "| --- | --- | --- | --- | --- | --- | --- |"
-  ]
-
-  items.each do |item|
-    lines << [
-      item.priority,
-      item.kind,
-      item.created,
-      item.confidence.nil? ? "" : item.confidence,
-      item.review_status,
-      item.relative_path,
-      item.evidence_paths.join(", ")
-    ].map { |cell| markdown_cell(cell) }.join(" | ").then { |row| "| #{row} |" }
-  end
-
-  lines << ""
-  lines << "No pending review items." if items.empty?
   path.dirname.mkpath
-  path.write("#{lines.join("\n")}\n")
+  path.write(Nous::Review.render_report(Nous::Review.report(vault_root: options.vault_root, generated_at: timestamp)))
   puts "report: #{relative_or_absolute(path, options.vault_root)}"
 end
 
@@ -553,7 +410,7 @@ end
 
 begin
   run(ARGV)
-rescue ReviewError => error
+rescue ReviewError, Nous::Error => error
   warn "review_queue: #{error.message}"
   exit 1
 end

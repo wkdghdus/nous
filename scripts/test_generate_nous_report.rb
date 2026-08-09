@@ -32,6 +32,18 @@ def assert(condition, message)
   raise message unless condition
 end
 
+def assert_no_repo_vault_writes
+  repo_vault = ROOT + "vault"
+  return unless repo_vault.directory?
+
+  markers = ["value_lucid_work", "belief_context_matters", "Pending Report Leak"]
+  leaked = repo_vault.find.select(&:file?).select do |path|
+    text = path.binread
+    markers.any? { |marker| path.to_s.include?(marker) || text.include?(marker) }
+  end
+  assert(leaked.empty?, "generate_nous_report fixtures leaked into repo vault: #{leaked.map(&:to_s).inspect}")
+end
+
 def assert_success(status, stderr)
   assert(status.success?, "expected command to pass: #{stderr}")
 end
@@ -359,6 +371,13 @@ Dir.mktmpdir("nous-report-test-") do |dir|
       failures << [name, error]
       warn "not ok - #{name}: #{error.message}"
     end
+  end
+
+  begin
+    assert_no_repo_vault_writes
+  rescue StandardError => error
+    failures << ["repository vault leak scan", error]
+    warn "not ok - repository vault leak scan: #{error.message}"
   end
 
   unless failures.empty?

@@ -26,6 +26,18 @@ def assert(condition, message)
   raise message unless condition
 end
 
+def assert_no_repo_vault_writes
+  repo_vault = ROOT + "vault"
+  return unless repo_vault.directory?
+
+  markers = ["Focused writing helps decisions", "claim_2026-06-01_decisions", "edge_2026-06-03_decisions"]
+  leaked = repo_vault.find.select(&:file?).select do |path|
+    text = path.binread
+    markers.any? { |marker| path.to_s.include?(marker) || text.include?(marker) }
+  end
+  assert(leaked.empty?, "review_queue fixtures leaked into repo vault: #{leaked.map(&:to_s).inspect}")
+end
+
 def yaml_frontmatter(data)
   Psych.dump(data).sub(/\A---\n/, "")
 end
@@ -353,6 +365,8 @@ Dir.mktmpdir("nous-review-queue-test-") do |dir|
   assert_success(status, stderr)
   assert(stdout.include?("edited:"), "edit success output is wrong")
   assert(fixture[:note].read.include?("edited-by-test"), "edit should invoke multi-word EDITOR command with item path")
+
+  assert_no_repo_vault_writes
 end
 
 puts "review_queue tests ok"

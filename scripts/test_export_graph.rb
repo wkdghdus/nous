@@ -23,6 +23,18 @@ def assert(condition, message)
   raise message unless condition
 end
 
+def assert_no_repo_vault_writes
+  repo_vault = ROOT + "vault"
+  return unless repo_vault.directory?
+
+  markers = ["memory_2026-06-29_focus", "claim_2026-06-29_focus", "edge_2026-06-29_focus"]
+  leaked = repo_vault.find.select(&:file?).select do |path|
+    text = path.binread
+    markers.any? { |marker| path.to_s.include?(marker) || text.include?(marker) }
+  end
+  assert(leaked.empty?, "export_graph fixtures leaked into repo vault: #{leaked.map(&:to_s).inspect}")
+end
+
 def assert_success(status, stderr)
   assert(status.success?, "expected command to pass: #{stderr}")
 end
@@ -296,6 +308,8 @@ Dir.mktmpdir("nous-export-graph-test-") do |dir|
   success_fixture(vault)
   _stdout, stderr, status = run_export(vault, output, env: { "NOUS_GRAPH_TIME" => "not-a-time" })
   assert_failure(status, stderr, "NOUS_GRAPH_TIME must be an ISO-8601 timestamp")
+
+  assert_no_repo_vault_writes
 end
 
 puts "export graph tests ok"
