@@ -384,7 +384,7 @@ Dir.mktmpdir("nous-ingest-artifact-test-") do |dir|
   ensure
     FileUtils.chmod(0o700, rollback_vault + "01_agent_inbox/notes")
   end
-  created_after_failure = rollback_vault.find.select(&:file?).reject { |path| path.basename.to_s == "AGENT.md" }
+  created_after_failure = rollback_vault.find.select(&:file?).reject { |path| ["AGENT.md", ".nous.lock"].include?(path.basename.to_s) }
   assert(created_after_failure.empty?, "rollback failure left files: #{created_after_failure.inspect}")
   assert(rollback_source.read == "Rollback should remove staged outputs.", "rollback changed source")
 

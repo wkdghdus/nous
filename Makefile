@@ -6,6 +6,7 @@ lint:
 test:
 	ruby scripts/test_cli_contracts.rb
 	ruby scripts/test_nous_read_core.rb
+	ruby scripts/test_nous_mutation_core.rb
 	ruby scripts/test_ingest_text.rb
 	ruby scripts/test_ingest_artifact.rb
 	ruby scripts/test_review_queue.rb

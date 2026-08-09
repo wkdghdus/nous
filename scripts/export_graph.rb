@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "fileutils"
+require "json"
 require "optparse"
 require "pathname"
 require "time"
@@ -65,19 +65,22 @@ rescue ArgumentError
 end
 
 def write_graph(output_path, graph)
-  output_path.dirname.mkpath
-  temp_path = output_path.dirname + ".#{output_path.basename}.tmp-#{Process.pid}"
-  temp_path.write(Nous::Graph.render(graph))
-  FileUtils.mv(temp_path.to_s, output_path.to_s)
-ensure
-  temp_path&.delete if temp_path&.exist?
+  Nous::AtomicWriter.replace_adapter_path(
+    path: output_path,
+    bytes: Nous::Graph.render(graph),
+    validate: ->(temp_path) { JSON.parse(temp_path.read) }
+  )
 end
 
 def run(argv)
   options = parse_options(argv)
-  graph = Nous::Graph.build(vault_root: options.vault_root, generated_at: graph_timestamp)
-  output_path = resolve_output_path(options)
-  write_graph(output_path, graph)
+  options.vault_root.mkpath unless options.vault_root.exist?
+  output_path = Nous::VaultLock.new(vault_root: options.vault_root).with_exclusive do
+    graph = Nous::Graph.build(vault_root: options.vault_root, generated_at: graph_timestamp)
+    output_path = resolve_output_path(options)
+    write_graph(output_path, graph)
+    output_path
+  end
   puts "graph: #{Nous.relative_or_absolute(output_path, options.vault_root)}"
 end
 

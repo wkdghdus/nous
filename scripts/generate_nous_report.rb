@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "fileutils"
 require "optparse"
 require "pathname"
 require "time"
@@ -65,19 +64,18 @@ rescue ArgumentError
 end
 
 def write_report(output_path, markdown)
-  output_path.dirname.mkpath
-  temp_path = output_path.dirname + ".#{output_path.basename}.tmp-#{Process.pid}"
-  temp_path.write(markdown)
-  FileUtils.mv(temp_path.to_s, output_path.to_s)
-ensure
-  temp_path&.delete if temp_path&.exist?
+  Nous::AtomicWriter.replace_adapter_path(path: output_path, bytes: markdown)
 end
 
 def run(argv)
   options = parse_options(argv)
-  report = Nous::Report.build(vault_root: options.vault_root, generated_at: report_timestamp)
-  output_path = resolve_output_path(options)
-  write_report(output_path, Nous::Report.render(report))
+  options.vault_root.mkpath unless options.vault_root.exist?
+  output_path = Nous::VaultLock.new(vault_root: options.vault_root).with_exclusive do
+    report = Nous::Report.build(vault_root: options.vault_root, generated_at: report_timestamp)
+    output_path = resolve_output_path(options)
+    write_report(output_path, Nous::Report.render(report))
+    output_path
+  end
   puts "report: #{Nous.relative_or_absolute(output_path, options.vault_root)}"
 end
 

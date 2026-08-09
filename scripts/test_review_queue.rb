@@ -206,6 +206,17 @@ Dir.mktmpdir("nous-review-queue-test-") do |dir|
   assert(stdout.include?("- 00_raw_artifacts/text/artifact_2026-06-01_reflection.md"), "show should print evidence")
   assert(fixture[:note].read == before_show, "show must not mutate the item")
 
+  missing_path = tmpdir + "private/missing-review-item.md"
+  _stdout, stderr, status = run_review(fixture[:vault], "show", missing_path.to_s)
+  assert_failure(status, stderr, "review item does not exist")
+  assert(!stderr.include?(tmpdir.to_s), "missing show error should not leak an external path")
+
+  outside_path = tmpdir + "private/outside-review-item.md"
+  write_note(outside_path, { "id" => "outside", "type" => "memory" }, "# Outside\n")
+  _stdout, stderr, status = run_review(fixture[:vault], "show", outside_path.to_s)
+  assert_failure(status, stderr, "path is not in a review inbox")
+  assert(!stderr.include?(tmpdir.to_s), "external show error should not leak an external path")
+
   fixture = fixture_vault(tmpdir, "note-approval-vault")
   _stdout, stderr, status = run_review(fixture[:vault], "approve", fixture[:note].to_s)
   assert_failure(status, stderr, "requires --as TYPE")
@@ -238,6 +249,10 @@ Dir.mktmpdir("nous-review-queue-test-") do |dir|
   assert(frontmatter(claim_destination)["review_status"] == "reviewed", "approved claim review status is wrong")
 
   fixture = fixture_vault(tmpdir, "relationship-approval-vault")
+  _stdout, stderr, status = run_review(fixture[:vault], "approve", "--as", "memory", fixture[:note].to_s)
+  assert_success(status, stderr)
+  _stdout, stderr, status = run_review(fixture[:vault], "approve", fixture[:claim].to_s)
+  assert_success(status, stderr)
   stdout, stderr, status = run_review(fixture[:vault], "approve", fixture[:relationship].to_s)
   assert_success(status, stderr)
   relationship_destination = fixture[:vault] + "03_canonical_model/relationships/edge_2026-06-03_decisions.md"

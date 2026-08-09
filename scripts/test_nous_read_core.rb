@@ -245,6 +245,30 @@ Dir.mktmpdir("nous-read-core-test-") do |dir|
   assert(show_text.include?("Path: 01_agent_inbox/notes/note_a.md"), "review show should render path")
   assert(show_text.include?("- 00_raw_artifacts/text/source.md"), "review show should render source evidence")
   assert(item.path.read == before_show, "review show should not mutate source")
+
+  missing_path = tmpdir + "private/missing-review-item.md"
+  missing_error = nil
+  begin
+    Nous::Review.show(path: missing_path, vault_root: review_vault)
+  rescue Nous::Error => caught
+    missing_error = caught
+  end
+  assert(missing_error&.code == "NOUS_RECORD_NOT_FOUND", "missing review item should expose stable not-found code")
+  assert(missing_error&.message == "review item does not exist", "missing review item error should be generic")
+  assert(!missing_error.message.include?(tmpdir.to_s), "missing review item error should not leak an external path")
+
+  outside_path = tmpdir + "private/outside-review-item.md"
+  write_record(outside_path, base_frontmatter("outside", "memory"), "# Outside\n")
+  outside_error = nil
+  begin
+    Nous::Review.show(path: outside_path, vault_root: review_vault)
+  rescue Nous::Error => caught
+    outside_error = caught
+  end
+  assert(outside_error&.code == "NOUS_INVALID_INPUT", "external review item should expose stable invalid-input code")
+  assert(outside_error&.message == "path is not in a review inbox", "external review item error should be generic")
+  assert(!outside_error.message.include?(tmpdir.to_s), "external review item error should not leak an external path")
+
   report_text = Nous::Review.render_report(Nous::Review.report(vault_root: review_vault, generated_at: REVIEW_TIME))
   assert(report_text.include?("- Pending items: 2"), "review report should count pending items")
   assert(!report_text.include?("edge_archived"), "review report should exclude retired items")

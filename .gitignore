@@ -9,3 +9,5 @@ dist/
 build/
 coverage/
 tmp/
+**/.nous.lock
+**/.tmp-nous-*

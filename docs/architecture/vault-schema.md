@@ -110,6 +110,8 @@ Decision transitions:
 
 Inbox notes are generic `type: note`; approving a note must include an explicit reviewed note type so it can move to the matching `vault/02_notes/<type>/` directory. Claims move to `vault/03_canonical_model/claims/`. Relationships move to `vault/03_canonical_model/relationships/`.
 
+Relationship approval is intentionally ordered. A candidate relationship cannot move to `vault/03_canonical_model/relationships/` until both endpoint IDs resolve uniquely to active reviewed records that are exportable graph nodes: a supported reviewed note in the matching `vault/02_notes/<type>/` directory, or an active reviewed canonical claim in `vault/03_canonical_model/claims/`. Pending inbox records, raw artifacts, canonical relationships, retired records, malformed reviewed-note directory/type combinations, duplicate IDs, and missing IDs block approval. Graph export keeps its own dangling-endpoint validation as a second defense.
+
 ## Interpretation Levels
 
 | Level | Use |
@@ -139,6 +141,8 @@ Allowed MVP relationship types:
 
 The M4 graph export is a deterministic, reviewed-only JSON projection written to `vault/04_generated/graph/nous_graph.json` by default. It is generated from accepted Markdown records and does not keep separate graph state.
 
+Generation is serialized with the vault mutation lock while it builds the reviewed index and atomically replaces the derived JSON output. Custom `--output` paths retain the CLI contract, but replacement still uses destination-local staging.
+
 Default export sources:
 
 - Reviewed notes in direct child directories of `vault/02_notes/`.
@@ -154,6 +158,8 @@ Graph node labels are deterministic: first Markdown H1, then frontmatter `title`
 The M5 Nous report is a deterministic, regenerable Markdown summary written to `vault/04_generated/reports/nous.md` by default. It is reviewed-only and source-backed: it reads reviewed notes from `vault/02_notes/`, canonical claims from `vault/03_canonical_model/claims/`, and canonical relationships from `vault/03_canonical_model/relationships/`.
 
 The report command accepts `--vault-root PATH` for fixture or alternate vault roots and `--output PATH` for a different Markdown destination. It may quote or excerpt reviewed records, but it must not introduce new psychological conclusions, hidden inferences, or unsupported certainty beyond the source records.
+
+Report generation, including review queue report generation, is serialized with the vault mutation lock and replaces derived output atomically. Review list and show operations take a shared lock so they do not observe an active review mutation mid-transition.
 
 Inbox, rejected, deprecated, archived, and unsupported records are excluded from the default report. Relationship context is only shown when both endpoints resolve to included report entries.
 
@@ -179,6 +185,12 @@ Collision handling is additive: one shared suffix is chosen for the payload copy
 Binary and image imports stay metadata-only. They may record user-authored context, represented date, and import date, but they do not infer visible content, identity, emotion, or theme from the payload itself. Observed content remains empty unless the source is a supported text-like file and the importer can extract bounded source-backed facts.
 
 The generated inbox note points to the artifact record, not directly to the copied payload. Review, graph export, and report generation continue to operate on reviewed or canonical Markdown records rather than raw payload files.
+
+## M7C Vault Safety
+
+M7C adds shared filesystem safety primitives without changing CLI contracts. Mutating CLI commands acquire one vault-scoped `.nous.lock` with OS `flock` semantics. Coherent reads use shared locks, and build-plus-derived-write commands use exclusive locks. The lock file is runtime state and is ignored by Git.
+
+All new core-controlled writes stage in the destination directory before finalization. Evidence and candidate creation use no-overwrite finalization; derived outputs use atomic replacement after successful rendering or validation. Multi-file ingestion and merge operations track invocation-created files so handled failures remove only files from the current operation while preserving pre-existing records and external sources.
 
 ## Manual M1 Done Check
 

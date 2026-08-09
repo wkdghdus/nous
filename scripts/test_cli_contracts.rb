@@ -223,11 +223,13 @@ def case_ingestion_default_root_contracts(tmpdir)
   clone_root = tmpdir + "default-root-clone"
   clone_scripts = clone_root + "scripts"
   clone_vault = clone_root + "vault"
+  clone_lib = clone_root + "lib"
   cloned_scripts = {
     ingest_text: clone_scripts + "ingest_text.rb",
     ingest_artifact: clone_scripts + "ingest_artifact.rb"
   }
   clone_scripts.mkpath
+  FileUtils.cp_r(ROOT + "lib", clone_lib)
   cloned_scripts.each do |name, target|
     FileUtils.cp(SCRIPTS.fetch(name), target)
   end

@@ -15,5 +15,8 @@ Direct children:
 - `test_ingest_artifact.rb` - dependency-free regression tests for raw artifact ingestion behavior.
 - `test_ingest_text.rb` - dependency-free regression tests for text ingestion behavior.
 - `test_generate_nous_report.rb` - dependency-free regression tests for Nous report generation behavior.
+- `test_nous_mutation_core.rb` - dependency-free direct tests for M7C path, lock, write, transaction, ingestion, review, relationship, and coherent read/write safety.
 - `test_nous_read_core.rb` - dependency-free direct tests for the side-effect-free read-only Nous Core.
 - `test_review_queue.rb` - dependency-free regression tests for review queue state transitions.
+
+M7C CLI scripts should remain thin adapters: they own option parsing, environment-variable precedence, stdout/stderr prefixes, path presentation, and `$EDITOR` launch. Core modules under `lib/nous/` own vault mutation rules, locking, atomic writes, and relationship endpoint integrity.

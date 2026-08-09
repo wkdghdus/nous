@@ -7,6 +7,16 @@ require "psych"
 require "set"
 require "time"
 
+require_relative "nous/path_guard"
+require_relative "nous/vault_lock"
+require_relative "nous/atomic_writer"
+require_relative "nous/file_transaction"
+require_relative "nous/collision_allocator"
+require_relative "nous/text_ingestion"
+require_relative "nous/artifact_ingestion"
+require_relative "nous/relationship_integrity"
+require_relative "nous/review_mutation"
+
 module Nous
   SCHEMA_VERSION = "0.1"
   SUMMARY_MAX_LENGTH = 240
@@ -705,11 +715,11 @@ module Nous
     def load_item(path, vault_root:)
       path = Pathname(path)
       vault_root = Pathname(vault_root).expand_path
-      raise Error.new("path does not exist: #{path}", code: "NOUS_RECORD_NOT_FOUND") unless path.file?
+      raise Error.new("review item does not exist", code: "NOUS_RECORD_NOT_FOUND") unless path.file?
 
       kind = kind_for_path(path, vault_root)
       if kind.nil?
-        raise Error.new("path is not in a review inbox: #{Nous.relative_or_absolute(path, vault_root)}", code: "NOUS_INVALID_INPUT")
+        raise Error.new("path is not in a review inbox", code: "NOUS_INVALID_INPUT")
       end
 
       relative_path = Nous.relative_or_absolute(path, vault_root)
