@@ -15,6 +15,8 @@ require_relative "nous/collision_allocator"
 require_relative "nous/text_ingestion"
 require_relative "nous/artifact_ingestion"
 require_relative "nous/relationship_integrity"
+require_relative "nous/record_index"
+require_relative "nous/agent_reads"
 require_relative "nous/review_mutation"
 
 module Nous

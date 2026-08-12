@@ -4,6 +4,7 @@ lint:
 	./scripts/lint.sh
 
 test:
+	ruby scripts/test_nous_agent_reads.rb
 	ruby scripts/test_cli_contracts.rb
 	ruby scripts/test_nous_read_core.rb
 	ruby scripts/test_nous_mutation_core.rb
