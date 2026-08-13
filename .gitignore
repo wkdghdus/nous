@@ -4,6 +4,14 @@
 .omx/state/
 .omx/logs/
 .omx/metrics.json
+.omx/team/
+.omx/reports/
+.omx/drafts/
+.omx/hud-config.json
+.omx/setup-scope.json
+.omx/tmux-hook.json
+.omx/plans/nous-m7-six-stage-draft/
+.omc/
 node_modules/
 dist/
 build/
