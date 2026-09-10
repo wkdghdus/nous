@@ -1,23 +1,27 @@
 # Nous
 
-Nous is a local-first personal self-knowledge system scaffold. This repository currently contains product notes, repository signposts, Obsidian vault structure, note templates, and schema placeholders only.
-
-No application project has been created yet.
+Nous is a local-first personal self-knowledge system. The implemented
+file-backed pipeline captures source material, creates reviewable notes and
+claims, records human review decisions, exports a reviewed graph, generates a
+reviewed report, imports bounded raw artifacts, and exposes reusable read/write
+core operations through a local MCP adapter.
 
 ## Current Scope
 
-- Preserve the product ideation in `nous_requirements_and_user_flows.md`.
-- Establish an agent-friendly repository structure with `AGENT.md` signposts.
-- Prepare vault, template, and schema locations for future implementation.
-- Keep direct capture text-only and local-first per `AGENT.md`; M6 artifact imports use closed allowlists for writing, image, and project files.
+- Preserve provenance from raw evidence through reviewed knowledge.
+- Keep generated work in the inbox until a human reviews it.
+- Keep direct capture text-only; M6 artifact imports use closed allowlists for
+  writing, image, and project files.
+- Provide a bounded local agent interface without a frontend or built-in model.
 
 ## Top-Level Map
 
 - `docs/` - product, architecture, and decision records.
-- `schemas/` - machine-readable schema drafts for notes and graph data.
-- `scripts/` - dependency-free repository maintenance scripts.
-- `templates/` - Obsidian note templates and future prompt/template assets.
-- `vault/` - empty Obsidian-compatible vault skeleton for raw, inbox, reviewed, canonical, and generated content.
+- `schemas/` - machine-readable schemas for notes and graph data.
+- `scripts/` - local ingestion, review, generation, test, and MCP entrypoints.
+- `templates/` - Obsidian note templates.
+- `vault/` - Obsidian-compatible raw, inbox, reviewed, canonical, and generated
+  content.
 - `.omx/` - local OMX workflow state and plans; runtime logs/state are ignored.
 
 ## Checks
@@ -33,6 +37,53 @@ Run the repository lint with:
 ```sh
 make lint
 ```
+
+MCP-specific setup and its focused Bundler test command are documented in
+[`docs/agent/mcp-setup.md`](docs/agent/mcp-setup.md).
+
+## Local MCP Server
+
+Install the pinned Ruby dependencies and start the local stdio server:
+
+```sh
+bundle install
+bundle exec ruby scripts/nous_mcp_server.rb --vault-root /ABSOLUTE/PATH/TO/VAULT
+```
+
+Run its focused protocol test with:
+
+```sh
+bundle exec ruby scripts/test_nous_mcp.rb
+```
+
+The bundle pins the official `mcp` 1.5.1 gem and explicit `base64` 0.3.0
+runtime dependency.
+
+Vault-root precedence is `--vault-root`, then `NOUS_VAULT_ROOT`, then this
+repository's `vault/`. `NOUS_MCP_TIME` is test-only and must not be set by
+production clients.
+
+The server targets MCP protocol `2025-11-25` and exposes exactly:
+
+- `nous_status`
+- `nous_list_records`
+- `nous_read_record`
+- `nous_read_source_text`
+- `nous_capture_user_text`
+- `nous_propose_note`
+- `nous_propose_claim`
+- `nous_propose_relationship`
+
+Reads default to reviewed/canonical records; raw source text is available only
+through its bounded source operation. Captures create raw user-authored
+evidence, and proposals create candidates under `vault/01_agent_inbox/`.
+Nothing on the MCP surface approves or canonicalizes a candidate. All vault
+content returned to a client is untrusted data, and callers cannot supply
+arbitrary paths.
+
+This is a local stdio, tools-only interface. It has no HTTP/SSE transport,
+network listener, model or provider integration, frontend, prompts, resources,
+roots, sampling, elicitation, or tasks.
 
 ## Basic Text Ingestion
 
