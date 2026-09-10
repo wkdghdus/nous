@@ -5,6 +5,8 @@ require "pathname"
 module Nous
   module RecordIndex
     MAX_DIAGNOSTICS = 50
+    MAX_DIAGNOSTIC_MESSAGE_LENGTH = 256
+    MAX_DIAGNOSTIC_PATH_LENGTH = 500
 
     KNOWN_RECORD_DIRS = [
       "00_raw_artifacts/text",
@@ -285,7 +287,11 @@ module Nous
     def add_diagnostic(diagnostics, code, message, relative_path, extra = {})
       return if diagnostics.length >= MAX_DIAGNOSTICS
 
-      diagnostics << { "code" => code, "message" => message, "path" => relative_path }.merge(stringify_keys(extra))
+      diagnostics << {
+        "code" => code,
+        "message" => bounded_text(message, MAX_DIAGNOSTIC_MESSAGE_LENGTH),
+        "path" => bounded_text(relative_path, MAX_DIAGNOSTIC_PATH_LENGTH)
+      }.merge(stringify_keys(extra))
     end
 
     def stringify_keys(hash)
@@ -294,15 +300,23 @@ module Nous
 
     def sanitize_message(message, relative_path)
       text = message.to_s
-      return text if relative_path.nil? || relative_path.empty?
+      return bounded_text(text, MAX_DIAGNOSTIC_MESSAGE_LENGTH) if relative_path.nil? || relative_path.empty?
 
       # Parser errors are invoked with vault-relative error paths. If a lower layer
       # still exposes local context, collapse it to a stable relative-path message.
-      if text.include?(relative_path)
-        text
-      else
-        "#{text}: #{relative_path}"
-      end
+      message = if text.include?(relative_path)
+                  text
+                else
+                  "#{text}: #{relative_path}"
+                end
+      bounded_text(message, MAX_DIAGNOSTIC_MESSAGE_LENGTH)
+    end
+
+    def bounded_text(value, max_chars)
+      text = value.to_s
+      return text if text.each_char.count <= max_chars
+
+      text.each_char.first(max_chars - 1).join + "…"
     end
   end
 end
