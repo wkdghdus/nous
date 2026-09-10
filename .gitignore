@@ -19,3 +19,5 @@ coverage/
 tmp/
 **/.nous.lock
 **/.tmp-nous-*
+
+/.worktrees
