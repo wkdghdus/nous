@@ -29,7 +29,6 @@ module Nous
 
       def build(vault_root:, generated_at:)
         root = Nous::PathGuard.validate_vault_root(vault_root)
-        Nous::RecordIndex.scan(vault_root: root)
         time = if generated_at.nil?
                  nil
                else
