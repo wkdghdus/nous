@@ -441,11 +441,17 @@ class NousMCPTest < Minitest::Test
     vault = create_vault("malformed")
     seed_vault(vault, suffix: "malformed")
     vault.join("02_notes/memories/broken.md").write("---\ninvalid: [frontmatter\n")
+    write_record(
+      vault.join("02_notes/memories/overlong.md"),
+      base_frontmatter("x" * 201, "memory"),
+      "# Overlong\n"
+    )
 
     with_raw_session(vault: vault) do |session|
       session.initialize_mcp
       status = call_success(session, "nous_status", {})
       assert status.fetch("warnings").any? { |warning| warning.fetch("code") == "NOUS_PARSE_FAILED" }
+      assert status.fetch("warnings").any? { |warning| warning.fetch("code") == "NOUS_INVALID_INPUT" }
     end
   end
 
