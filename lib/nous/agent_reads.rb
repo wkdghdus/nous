@@ -12,6 +12,11 @@ module Nous
   LIST_RECORD_MAX_LIMIT = 50
   LIST_EXCERPT_MAX_CHARS = 240
   LIST_EVIDENCE_MAX = 10
+  READ_ID_MAX_CHARS = 200
+  READ_PATH_MAX_CHARS = 500
+  READ_LABEL_MAX_CHARS = 500
+  READ_SCALAR_MAX_CHARS = 256
+  READ_TAG_MAX_CHARS = 64
   SOURCE_TEXT_EXTENSIONS = [".txt", ".md", ".json", ".yaml", ".yml"].freeze
   SOURCE_BINARY_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"].freeze
 
@@ -284,7 +289,7 @@ module Nous
     tags = Array(record.frontmatter["tags"]).map(&:to_s).join(" ").downcase
     evidence = normalized_refs(record.frontmatter["evidence"]).map { |entry| entry.values.join(" ") }.join(" ").downcase
     body = record.body.to_s.downcase
-    searchable = [record.id, label, tags, evidence, body].join(" ")
+    searchable = [record.id.downcase, label, tags, evidence, body].join(" ")
     return 0 unless tokens.all? { |token| searchable.include?(token) }
 
     return 100 if record.id.downcase == q
@@ -316,16 +321,16 @@ module Nous
   def base_envelope(indexed)
     fm = indexed.frontmatter
     {
-      "id" => indexed.id,
-      "type" => indexed.type,
-      "kind" => indexed.kind,
-      "lifecycle" => indexed.lifecycle,
-      "status" => string_value(fm["status"]),
-      "review_status" => string_value(fm["review_status"]),
-      "path" => indexed.relative_path,
-      "label" => label_for(indexed.record, indexed.id),
-      "created" => safe_scalar(fm["created"]),
-      "updated" => safe_scalar(fm["updated"]),
+      "id" => bounded_string(indexed.id, READ_ID_MAX_CHARS),
+      "type" => bounded_string(indexed.type, READ_SCALAR_MAX_CHARS),
+      "kind" => bounded_string(indexed.kind, READ_SCALAR_MAX_CHARS),
+      "lifecycle" => bounded_string(indexed.lifecycle, READ_SCALAR_MAX_CHARS),
+      "status" => bounded_string(fm["status"], READ_SCALAR_MAX_CHARS),
+      "review_status" => bounded_string(fm["review_status"], READ_SCALAR_MAX_CHARS),
+      "path" => bounded_string(indexed.relative_path, READ_PATH_MAX_CHARS),
+      "label" => bounded_string(label_for(indexed.record, indexed.id), READ_LABEL_MAX_CHARS),
+      "created" => bounded_string(fm["created"], READ_SCALAR_MAX_CHARS),
+      "updated" => bounded_string(fm["updated"], READ_SCALAR_MAX_CHARS),
       "confidence" => numeric_or_nil(fm["confidence"]),
       "tags" => safe_string_array(fm["tags"]),
       "source" => sanitized_source(fm["source"]),
@@ -358,12 +363,13 @@ module Nous
                      path = safe_relative_path_value(entry["path"])
                      next if id.empty? && path.empty?
 
-                     { "id" => id, "path" => path.empty? ? id : path }
+                     { "id" => bounded_string(id, READ_ID_MAX_CHARS),
+                       "path" => bounded_string(path.empty? ? id : path, READ_PATH_MAX_CHARS) }
                    else
                      text = safe_relative_path_value(entry)
                      next if text.empty?
 
-                     { "id" => "", "path" => text }
+                     { "id" => "", "path" => bounded_string(text, READ_PATH_MAX_CHARS) }
                    end
       key = [normalized["id"], normalized["path"]]
       next if seen[key]
@@ -379,7 +385,8 @@ module Nous
     allowed = {}
     %w[type extraction_method original_filename represented_date sha256 bytes].each do |key|
       value = source[key]
-      allowed[key] = safe_scalar(value) unless value.nil? || safe_scalar(value).empty?
+      scalar = bounded_string(value, READ_SCALAR_MAX_CHARS)
+      allowed[key] = scalar unless scalar.empty?
     end
     path = safe_relative_path_value(source["path"])
     allowed["path"] = path unless path.empty?
@@ -394,19 +401,19 @@ module Nous
     return "[redacted_external_path]" if path.absolute?
     return "[redacted_unsafe_path]" if path.each_filename.any? { |part| part == ".." }
 
-    text
+    bounded_string(text, READ_PATH_MAX_CHARS)
   end
 
-  def safe_scalar(value)
+  def bounded_string(value, max_chars)
     return "" if value.nil?
 
-    value.to_s
+    value.to_s.each_char.first(max_chars).join
   end
 
   def safe_string_array(value)
     return [] unless value.is_a?(Array)
 
-    value.map { |entry| string_value(entry) }.reject(&:empty?).uniq.first(50)
+    value.map { |entry| bounded_string(entry, READ_TAG_MAX_CHARS).strip }.reject(&:empty?).uniq.first(50)
   end
 
   def numeric_or_nil(value)
