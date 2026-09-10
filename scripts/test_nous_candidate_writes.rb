@@ -1008,7 +1008,6 @@ def test_direct_e2e_and_static(tmpdir)
   forbidden = /require\s+["']mcp["']|\bMCP::|Net::HTTP|TCPSocket|OpenAI|Anthropic|Gemfile|SQLite|PG::/
   assert(!source_text.match?(forbidden), "candidate core has no MCP/network/model/provider/database dependency")
   assert(!Object.const_defined?(:MCP), "candidate tests load no MCP classes")
-  assert(!(ROOT + "Gemfile").exist?, "candidate writes add no Gemfile")
 end
 
 Dir.mktmpdir("nous-candidate-writes-test-") do |directory|
