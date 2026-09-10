@@ -15,6 +15,12 @@ module Nous
       INTEGER = { type: "integer" }.freeze
       NUMBER = { type: "number" }.freeze
       STRING_ARRAY = { type: "array", items: STRING }.freeze
+      READ_TAG_ARRAY = {
+        type: "array",
+        items: { type: "string", maxLength: Nous::READ_TAG_MAX_CHARS },
+        maxItems: 50,
+        uniqueItems: true
+      }.freeze
       REQUEST_ID_PATTERN = CV::REQUEST_ID_PATTERN.source.sub("\\A", "^").sub("\\z", "$").freeze
 
       module_function
@@ -92,12 +98,15 @@ module Nous
 
       def record_properties
         {
-          id: STRING, type: STRING, kind: STRING, lifecycle: STRING, status: STRING,
-          review_status: STRING, path: STRING, label: STRING, created: STRING, updated: STRING,
-          confidence: { type: ["number", "null"] }, tags: STRING_ARRAY,
+          id: string(max: Nous::READ_ID_MAX_CHARS), type: string(max: Nous::READ_SCALAR_MAX_CHARS),
+          kind: string(max: Nous::READ_SCALAR_MAX_CHARS), lifecycle: string(max: Nous::READ_SCALAR_MAX_CHARS),
+          status: string(max: Nous::READ_SCALAR_MAX_CHARS), review_status: string(max: Nous::READ_SCALAR_MAX_CHARS),
+          path: string(max: Nous::READ_PATH_MAX_CHARS), label: string(max: Nous::READ_LABEL_MAX_CHARS),
+          created: string(max: Nous::READ_SCALAR_MAX_CHARS), updated: string(max: Nous::READ_SCALAR_MAX_CHARS),
+          confidence: { type: ["number", "null"] }, tags: READ_TAG_ARRAY,
           source: { type: "object" }, evidence: { type: "object" }, counterevidence: { type: "object" },
           excerpt: { type: ["string", "null"] }, search_score: NUMBER, content_role: { const: "untrusted_data" },
-          body: STRING, body_total_chars: INTEGER, body_returned_chars: INTEGER,
+          body: string(max: Nous::READ_RECORD_MAX_CHARS), body_total_chars: INTEGER, body_returned_chars: INTEGER,
           body_truncated: BOOLEAN, max_chars: INTEGER
         }
       end
@@ -108,8 +117,9 @@ module Nous
 
       def source_output
         properties = record_properties.merge(
-          source_kind: STRING, content_available: BOOLEAN, content_unavailable_reason: STRING,
-          text: STRING, offset_chars: INTEGER, max_chars: INTEGER, returned_chars: INTEGER,
+          source_kind: STRING, content_available: BOOLEAN,
+          content_unavailable_reason: string(max: Nous::READ_SCALAR_MAX_CHARS),
+          text: string(max: Nous::READ_SOURCE_MAX_CHARS), offset_chars: INTEGER, max_chars: INTEGER, returned_chars: INTEGER,
           total_chars: INTEGER, next_offset_chars: INTEGER, truncated: BOOLEAN,
           warnings: { type: "array", items: { type: "object" } }, payload_path: STRING
         )
