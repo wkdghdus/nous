@@ -441,6 +441,7 @@ class NousMCPTest < Minitest::Test
     vault = create_vault("malformed")
     seed_vault(vault, suffix: "malformed")
     vault.join("02_notes/memories/broken.md").write("---\ninvalid: [frontmatter\n")
+    vault.join("02_notes/memories/verbose.md").write("---\n#{'x' * 2_000}: [frontmatter\n")
     write_record(
       vault.join("02_notes/memories/overlong.md"),
       base_frontmatter("x" * 201, "memory"),
