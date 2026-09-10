@@ -1,6 +1,7 @@
 # Scripts Signpost
 
-Use this directory for dependency-free repository maintenance scripts. Do not add package-manager-specific tooling here unless the project has explicitly adopted that runtime.
+Use this directory for repository maintenance CLIs and the one SDK-backed local
+MCP stdio adapter. Keep every other script dependency-free.
 
 Direct children:
 
@@ -10,6 +11,7 @@ Direct children:
 - `generate_nous_report.rb` - dependency-free Markdown report CLI for reviewed Nous records and canonical support.
 - `lint.sh` - repository lint for schemas, text hygiene, signposts, and scaffold boundaries.
 - `review_queue.rb` - dependency-free review queue CLI for inbox notes, claims, and relationships.
+- `nous_mcp_server.rb` - Bundler-launched, tools-only local stdio MCP server over Nous Core.
 - `test_cli_contracts.rb` - dependency-free cross-script CLI contract characterization tests.
 - `test_export_graph.rb` - dependency-free regression tests for graph export behavior.
 - `test_ingest_artifact.rb` - dependency-free regression tests for raw artifact ingestion behavior.
@@ -18,6 +20,10 @@ Direct children:
 - `test_nous_mutation_core.rb` - dependency-free direct tests for M7C path, lock, write, transaction, ingestion, review, relationship, and coherent read/write safety.
 - `test_nous_read_core.rb` - dependency-free direct tests for the side-effect-free read-only Nous Core.
 - `test_nous_candidate_writes.rb` - dependency-free direct tests for M7E capture, candidate writes, idempotency, rendering, lifecycle, and concurrency.
+- `test_nous_mcp.rb` - official-client and independent raw-stdio tests for the M7F MCP boundary.
 - `test_review_queue.rb` - dependency-free regression tests for review queue state transitions.
 
 M7C CLI scripts should remain thin adapters: they own option parsing, environment-variable precedence, stdout/stderr prefixes, path presentation, and `$EDITOR` launch. Core modules under `lib/nous/` own vault mutation rules, locking, atomic writes, and relationship endpoint integrity.
+
+The MCP entrypoint must keep stdout protocol-only, expose exactly the approved
+eight tools, and delegate every business operation directly to Nous Core.
