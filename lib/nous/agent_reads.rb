@@ -130,7 +130,8 @@ module Nous
     path_value = source.is_a?(Hash) ? string_value(source["path"], strip: false) : ""
 
     if indexed.relative_path.start_with?("00_raw_artifacts/text/")
-      text = observed_content(indexed.body)
+      exact_capture = source.is_a?(Hash) && string_value(source["capture_channel"]) == "mcp"
+      text = observed_content(indexed.body, exact: exact_capture)
       return source_text_result(
         indexed,
         text: text,
@@ -412,7 +413,14 @@ module Nous
     nil
   end
 
-  def observed_content(body)
+  def observed_content(body, exact: false)
+    if exact
+      match = body.to_s.match(/^## Observed Content[ \t]*\n/m)
+      raise Error.new("artifact observed content is missing", code: "NOUS_UNSUPPORTED_SOURCE") if match.nil?
+
+      return body.to_s[match.end(0)..] || ""
+    end
+
     match = body.to_s.match(/^## Observed Content[ \t]*\n(?<content>.*?)(?=^## |\z)/m)
     raise Error.new("artifact observed content is missing", code: "NOUS_UNSUPPORTED_SOURCE") if match.nil?
 
