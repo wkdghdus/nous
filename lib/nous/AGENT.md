@@ -12,4 +12,9 @@ Current M7C-owned modules include:
 - review approve/reject/deprecate/merge mutations;
 - relationship endpoint integrity checks.
 
-Do not add MCP adapters, agent write APIs, request IDs, idempotency metadata, network calls, or editor/shell execution here. `$EDITOR` launch remains an adapter concern in `scripts/review_queue.rb`.
+M7E adds direct core-only candidate validation, rendering, persisted idempotency,
+verbatim user-text capture, and candidate note/claim/relationship mutations here.
+
+Do not add MCP adapters, network calls, model-provider calls, or editor/shell
+execution here. `$EDITOR` launch remains an adapter concern in
+`scripts/review_queue.rb`.
