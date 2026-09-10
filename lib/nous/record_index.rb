@@ -49,6 +49,7 @@ module Nous
     SUPPORTED_TYPES = (
       ["artifact", "note", "claim", "relationship"] + NOTE_TYPE_BY_DIRECTORY.values
     ).uniq.freeze
+    MAX_ID_LENGTH = 200
 
     IndexedRecord = Struct.new(:record, :id, :type, :kind, :lifecycle, :scope, keyword_init: true) do
       def relative_path
@@ -219,8 +220,12 @@ module Nous
     end
 
     def validate_frontmatter!(relative_path, frontmatter, classification)
-      if Nous.string_value(frontmatter["id"]).empty?
+      id = Nous.string_value(frontmatter["id"])
+      if id.empty?
         raise Error.new("missing record id: #{relative_path}", code: "NOUS_INVALID_INPUT")
+      end
+      if id.each_char.count > MAX_ID_LENGTH
+        raise Error.new("record id is too long: #{relative_path}", code: "NOUS_INVALID_INPUT")
       end
 
       frontmatter_type = Nous.string_value(frontmatter["type"])
