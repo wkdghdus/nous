@@ -21,6 +21,17 @@ module Nous
         maxItems: 50,
         uniqueItems: true
       }.freeze
+      WARNING = {
+        type: "object",
+        properties: {
+          code: { type: "string", maxLength: Nous::READ_SCALAR_MAX_CHARS },
+          message: { type: "string", maxLength: Nous::READ_SCALAR_MAX_CHARS },
+          path: { type: "string", maxLength: Nous::READ_PATH_MAX_CHARS },
+          id: { type: "string", maxLength: Nous::READ_ID_MAX_CHARS },
+          count: { type: "integer", minimum: 0 }
+        },
+        additionalProperties: false
+      }.freeze
       REQUEST_ID_PATTERN = CV::REQUEST_ID_PATTERN.source.sub("\\A", "^").sub("\\z", "$").freeze
 
       module_function
@@ -117,11 +128,12 @@ module Nous
 
       def source_output
         properties = record_properties.merge(
-          source_kind: STRING, content_available: BOOLEAN,
+          source_kind: string(max: Nous::READ_SCALAR_MAX_CHARS), content_available: BOOLEAN,
           content_unavailable_reason: string(max: Nous::READ_SCALAR_MAX_CHARS),
           text: string(max: Nous::READ_SOURCE_MAX_CHARS), offset_chars: INTEGER, max_chars: INTEGER, returned_chars: INTEGER,
           total_chars: INTEGER, next_offset_chars: INTEGER, truncated: BOOLEAN,
-          warnings: { type: "array", items: { type: "object" } }, payload_path: STRING
+          warnings: { type: "array", maxItems: Nous::RecordIndex::MAX_DIAGNOSTICS, items: WARNING },
+          payload_path: string(max: Nous::READ_PATH_MAX_CHARS)
         )
         object(properties, required: %w[id type kind lifecycle path content_available content_role])
       end
@@ -150,7 +162,7 @@ module Nous
           record_count: Schemas::INTEGER,
           counts: { type: "object" },
           generated: { type: "object" },
-          warnings: { type: "array", items: { type: "object" } }
+          warnings: { type: "array", maxItems: Nous::RecordIndex::MAX_DIAGNOSTICS, items: Schemas::WARNING }
         },
         required: %w[vault_schema_version record_count counts generated warnings]
       )
