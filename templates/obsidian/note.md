@@ -11,6 +11,14 @@ source:
   type:
   path:
   extraction_method:
+candidate_type:
+basis:
+generation:
+  interface: mcp
+  operation:
+  request_id:
+  input_sha256:
+  generated_at:
 interpretation_level: low
 evidence: []
 counterevidence: []
