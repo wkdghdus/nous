@@ -12,7 +12,7 @@ module Nous
   LIST_RECORD_MAX_LIMIT = 50
   LIST_EXCERPT_MAX_CHARS = 240
   LIST_EVIDENCE_MAX = 10
-  READ_ID_MAX_CHARS = 200
+  READ_ID_MAX_CHARS = RecordIndex::MAX_ID_LENGTH
   READ_PATH_MAX_CHARS = 500
   READ_LABEL_MAX_CHARS = 500
   READ_SCALAR_MAX_CHARS = 256
@@ -321,7 +321,7 @@ module Nous
   def base_envelope(indexed)
     fm = indexed.frontmatter
     {
-      "id" => bounded_string(indexed.id, READ_ID_MAX_CHARS),
+      "id" => indexed.id,
       "type" => bounded_string(indexed.type, READ_SCALAR_MAX_CHARS),
       "kind" => bounded_string(indexed.kind, READ_SCALAR_MAX_CHARS),
       "lifecycle" => bounded_string(indexed.lifecycle, READ_SCALAR_MAX_CHARS),
@@ -363,7 +363,9 @@ module Nous
                      path = safe_relative_path_value(entry["path"])
                      next if id.empty? && path.empty?
 
-                     { "id" => bounded_string(id, READ_ID_MAX_CHARS),
+                     next if id.each_char.count > READ_ID_MAX_CHARS
+
+                     { "id" => id,
                        "path" => bounded_string(path.empty? ? id : path, READ_PATH_MAX_CHARS) }
                    else
                      text = safe_relative_path_value(entry)
