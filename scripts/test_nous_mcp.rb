@@ -437,6 +437,18 @@ class NousMCPTest < Minitest::Test
     assert session.status.success?, session.stderr
   end
 
+  def test_status_remains_available_with_malformed_known_record
+    vault = create_vault("malformed")
+    seed_vault(vault, suffix: "malformed")
+    vault.join("02_notes/memories/broken.md").write("---\ninvalid: [frontmatter\n")
+
+    with_raw_session(vault: vault) do |session|
+      session.initialize_mcp
+      status = call_success(session, "nous_status", {})
+      assert status.fetch("warnings").any? { |warning| warning.fetch("code") == "NOUS_PARSE_FAILED" }
+    end
+  end
+
   def test_startup_failures_are_bounded_sanitized_and_stdout_clean
     missing = @tmpdir.join("missing-vault")
     assert_startup_failure(["--vault-root", missing.to_s], {}, /NOUS_/)
