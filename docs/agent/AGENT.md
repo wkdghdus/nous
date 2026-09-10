@@ -5,8 +5,11 @@ Use this directory for contracts that describe mutation-free agent read semantic
 Direct children:
 
 - `read-contract.md` - M7D core read operation contract for `status`, `list_records`, `read_record`, and `read_source_text`.
+- `archivist-contract.md` - M7E behavior and trust contract for direct core capture and candidate proposal operations.
 
-Do not document MCP availability, write tools, request IDs, idempotency, model calls, network behavior, or candidate mutation workflows here unless a later milestone explicitly adds them.
+Do not document MCP availability, protocol adapters, model calls, or network
+behavior here. M7E may document direct core request IDs, idempotency, and
+candidate mutation semantics without claiming M7F availability.
 
 When updating this directory, keep examples and contracts path-safe:
 
