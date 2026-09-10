@@ -76,8 +76,60 @@ required_fields:
       represented_date:
         type: date
         format: YYYY-MM-DD
+      authorship:
+        type: enum
+        values:
+          - user
+      capture_channel:
+        type: enum
+        values:
+          - mcp
 
 optional_fields:
+  candidate_type:
+    type: enum
+    description: "Only valid for generic candidate notes with type note in vault/01_agent_inbox/notes."
+    values:
+      - memory
+      - value
+      - belief
+      - project
+      - pattern
+      - decision
+      - person
+      - question
+      - contradiction
+  basis:
+    type: enum
+    values:
+      - user_asserted
+      - extractive
+      - agent_inferred
+  generation:
+    type: object
+    required_fields:
+      interface:
+        type: string
+        value: mcp
+      operation:
+        type: enum
+        values:
+          - nous_capture_user_text
+          - nous_propose_note
+          - nous_propose_claim
+          - nous_propose_relationship
+      request_id:
+        type: string
+        minimum_length: 1
+        maximum_length: 128
+        pattern: "^[A-Za-z0-9._:-]{1,128}$"
+      input_sha256:
+        type: string
+        pattern: "^[0-9a-f]{64}$"
+      generated_at:
+        type: datetime
+        format: ISO-8601
+        pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
   confidence:
     type: number
     minimum: 0
