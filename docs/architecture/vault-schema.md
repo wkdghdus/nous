@@ -2,7 +2,9 @@
 
 Version: 0.1
 
-This document defines the first usable Nous vault contract. It is intentionally file-first and manual-friendly: a user or agent should be able to create consistent Obsidian notes before any application code exists.
+This document defines the implemented Nous vault contract. It remains
+file-first and manual-friendly: core operations, local tools, and direct human
+edits share portable Markdown/YAML records and JSON exports.
 
 ## Principles
 
@@ -79,6 +81,27 @@ evidence:
 counterevidence: []
 ```
 
+M7E capture and candidate operations add optional origin and idempotency
+metadata:
+
+```yaml
+basis: user_asserted # or extractive, agent_inferred
+candidate_type: memory # inbox notes only
+generation:
+  interface: mcp
+  operation: nous_propose_note
+  request_id: host-stable-request-id
+  input_sha256: 64-lowercase-hex-digest
+  generated_at: "2026-09-10T05:00:00Z"
+related: [] # candidates only
+```
+
+`generation` is present on M7E raw captures as well as proposed records and is
+the persisted idempotency authority. `candidate_type` records the requested
+reviewed-note destination type while the inbox record remains `type: note`.
+Candidate claims and relationships omit `candidate_type`. Candidate-specific
+fields are not required on older, manual, reviewed, or canonical records.
+
 ## Review Statuses
 
 | Status | Meaning |
@@ -110,7 +133,19 @@ Decision transitions:
 
 Inbox notes are generic `type: note`; approving a note must include an explicit reviewed note type so it can move to the matching `vault/02_notes/<type>/` directory. Claims move to `vault/03_canonical_model/claims/`. Relationships move to `vault/03_canonical_model/relationships/`.
 
-Relationship approval is intentionally ordered. A candidate relationship cannot move to `vault/03_canonical_model/relationships/` until both endpoint IDs resolve uniquely to active reviewed records that are exportable graph nodes: a supported reviewed note in the matching `vault/02_notes/<type>/` directory, or an active reviewed canonical claim in `vault/03_canonical_model/claims/`. Pending inbox records, raw artifacts, canonical relationships, retired records, malformed reviewed-note directory/type combinations, duplicate IDs, and missing IDs block approval. Graph export keeps its own dangling-endpoint validation as a second defense.
+Relationship creation and approval are intentionally ordered. Persist proposed
+endpoint notes/claims first so their stable IDs exist, then propose a directed
+relationship with ordered `from`, `to`, and `type` fields. A relationship may
+reference pending endpoints for coordinated review, but it cannot move to
+`vault/03_canonical_model/relationships/` until both endpoint IDs resolve
+uniquely to active reviewed records that are exportable graph nodes: a
+supported reviewed note in the matching `vault/02_notes/<type>/` directory, or
+an active reviewed canonical claim in
+`vault/03_canonical_model/claims/`. Review endpoints before the relationship.
+Pending inbox records, raw artifacts, canonical relationships, retired records,
+malformed reviewed-note directory/type combinations, duplicate IDs, and
+missing IDs block approval. Graph export keeps its own dangling-endpoint
+validation as a second defense.
 
 ## Interpretation Levels
 
@@ -124,6 +159,16 @@ Relationship approval is intentionally ordered. A candidate relationship cannot 
 ## Relationship Records
 
 Relationship notes represent reviewable graph edges. They should name source and target IDs, relationship type, confidence, evidence, and review status. Generated edges start in `vault/01_agent_inbox/relationships/`; approved edges move to `vault/03_canonical_model/relationships/`.
+
+The directional tuple is serialized in semantic order and must not be
+alphabetized or reversed:
+
+```yaml
+relationship:
+  from: note_source_id
+  to: claim_target_id
+  type: supports
+```
 
 Allowed MVP relationship types:
 
@@ -190,7 +235,27 @@ The generated inbox note points to the artifact record, not directly to the copi
 
 M7C adds shared filesystem safety primitives without changing CLI contracts. Mutating CLI commands acquire one vault-scoped `.nous.lock` with OS `flock` semantics. Coherent reads use shared locks, and build-plus-derived-write commands use exclusive locks. The lock file is runtime state and is ignored by Git.
 
-All new core-controlled writes stage in the destination directory before finalization. Evidence and candidate creation use no-overwrite finalization; derived outputs use atomic replacement after successful rendering or validation. Multi-file ingestion and merge operations track invocation-created files so handled failures remove only files from the current operation while preserving pre-existing records and external sources.
+All new core-controlled writes stage in the destination directory before
+finalization. Evidence and candidate creation use no-overwrite finalization;
+derived outputs use atomic replacement after successful rendering or
+validation.
+
+Multi-file ingestion and merge operations track invocation-created files so handled failures remove only files from the current operation while preserving pre-existing records and external sources.
+
+## M7E Candidate Writes and M7F Adapter
+
+M7E core operations preserve confirmed user-authored text only under
+`vault/00_raw_artifacts/text/` and create proposed notes, claims, and
+relationships only under the matching `vault/01_agent_inbox/` directories.
+Callers supply bounded content, evidence IDs, and intent; core code owns record
+IDs, vault-relative paths, rendering, validation, locking, and idempotency.
+
+M7F exposes those writes and the bounded read core through eight local stdio MCP
+tools. Default reads are reviewed/canonical; raw source text is a separate,
+bounded operation. The adapter provides no arbitrary path access, review
+decisions, network transport, frontend, or model execution. Content crossing
+the boundary remains untrusted data, and inbox candidates remain excluded from
+reviewed graph/report projections until human review.
 
 ## Manual M1 Done Check
 
