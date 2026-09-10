@@ -33,7 +33,10 @@ module Nous
 
         RelationshipIntegrity.validate_relationship!(vault_root: root, item: item) if item.kind == "relationship"
         frontmatter = item.frontmatter.dup
-        frontmatter["type"] = note_type if item.kind == "note"
+        if item.kind == "note"
+          frontmatter["type"] = note_type
+          frontmatter.delete("candidate_type")
+        end
         apply_decision(frontmatter, "approved", timestamp, status: "active", review_status: "reviewed", note: reviewer_note)
         bytes = markdown(frontmatter, item.body)
 
