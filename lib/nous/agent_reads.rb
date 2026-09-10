@@ -96,7 +96,9 @@ module Nous
     record = context.unique_record!(key)
     body = record.body.to_s
     body_chars = body.each_char.to_a
-    visible_body = selected_max.zero? ? "" : body_chars.first(selected_max).join
+    content_body = body.sub(/\A\n?#[^\n]*(?:\n|\z)/, "")
+    content_chars = content_body.each_char.to_a
+    visible_body = selected_max.zero? ? "" : content_chars.first(selected_max).join
     envelope = base_envelope(record).merge(
       "body" => visible_body,
       "body_total_chars" => body_chars.length,
@@ -282,6 +284,8 @@ module Nous
     tags = Array(record.frontmatter["tags"]).map(&:to_s).join(" ").downcase
     evidence = normalized_refs(record.frontmatter["evidence"]).map { |entry| entry.values.join(" ") }.join(" ").downcase
     body = record.body.to_s.downcase
+    searchable = [record.id, label, tags, evidence, body].join(" ")
+    return 0 unless tokens.all? { |token| searchable.include?(token) }
 
     return 100 if record.id.downcase == q
     return 90 if label == q
