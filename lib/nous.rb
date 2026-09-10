@@ -18,6 +18,10 @@ require_relative "nous/relationship_integrity"
 require_relative "nous/record_index"
 require_relative "nous/agent_reads"
 require_relative "nous/review_mutation"
+require_relative "nous/candidate_validation"
+require_relative "nous/idempotency"
+require_relative "nous/candidate_renderer"
+require_relative "nous/candidate_writes"
 
 module Nous
   SCHEMA_VERSION = "0.1"
