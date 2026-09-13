@@ -27,16 +27,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8a-preflight-and-contract-freeze-plan.md
-- .omx/plans/test-spec-m8a-preflight-and-contract-freeze.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-verified-state.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/prd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8a-preflight-and-contract-freeze-plan.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/test-spec-m8a-preflight-and-contract-freeze.md
+- .omx/plans/nous-m8-planning-packagenous-m8-planning-package/m8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
@@ -83,16 +83,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8b-local-adapter-and-vault-session-plan.md
-- .omx/plans/test-spec-m8b-local-adapter-and-vault-session.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagem8-verified-state.md
+- .omx/plans/nous-m8-planning-packageprd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagem8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagem8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagem8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagem8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagem8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagem8b-local-adapter-and-vault-session-plan.md
+- .omx/plans/nous-m8-planning-packagetest-spec-m8b-local-adapter-and-vault-session.md
+- .omx/plans/nous-m8-planning-packagem8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
@@ -139,16 +139,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8c-read-only-application-experience-plan.md
-- .omx/plans/test-spec-m8c-read-only-application-experience.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagem8-verified-state.md
+- .omx/plans/nous-m8-planning-packageprd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagem8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagem8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagem8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagem8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagem8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagem8c-read-only-application-experience-plan.md
+- .omx/plans/nous-m8-planning-packagetest-spec-m8c-read-only-application-experience.md
+- .omx/plans/nous-m8-planning-packagem8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
@@ -195,16 +195,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8d-capture-import-and-retry-safety-plan.md
-- .omx/plans/test-spec-m8d-capture-import-and-retry-safety.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagem8-verified-state.md
+- .omx/plans/nous-m8-planning-packageprd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagem8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagem8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagem8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagem8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagem8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagem8d-capture-import-and-retry-safety-plan.md
+- .omx/plans/nous-m8-planning-packagetest-spec-m8d-capture-import-and-retry-safety.md
+- .omx/plans/nous-m8-planning-packagem8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
@@ -251,16 +251,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8e-human-review-workspace-plan.md
-- .omx/plans/test-spec-m8e-human-review-workspace.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagem8-verified-state.md
+- .omx/plans/nous-m8-planning-packageprd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagem8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagem8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagem8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagem8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagem8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagem8e-human-review-workspace-plan.md
+- .omx/plans/nous-m8-planning-packagetest-spec-m8e-human-review-workspace.md
+- .omx/plans/nous-m8-planning-packagem8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
@@ -307,16 +307,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8f-report-and-read-only-graph-plan.md
-- .omx/plans/test-spec-m8f-report-and-read-only-graph.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagem8-verified-state.md
+- .omx/plans/nous-m8-planning-packageprd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagem8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagem8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagem8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagem8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagem8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagem8f-report-and-read-only-graph-plan.md
+- .omx/plans/nous-m8-planning-packagetest-spec-m8f-report-and-read-only-graph.md
+- .omx/plans/nous-m8-planning-packagem8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
@@ -363,16 +363,16 @@ an active session. Compare the current revision with planning baseline
 14e2a00af439024be853d4aba47acd7184829de5. Reconcile relevant differences first.
 
 Read:
-- .omx/plans/m8-verified-state.md
-- .omx/plans/prd-m8-local-nous-application.md
-- .omx/plans/m8-shared-contract.md
-- .omx/plans/m8-architecture-decision.md
-- .omx/plans/m8-core-gap-register.md
-- .omx/plans/m8-app-adapter-contract.md
-- .omx/plans/m8-ux-and-user-flows.md
-- .omx/plans/m8h-launcher-recovery-and-release-plan.md
-- .omx/plans/test-spec-m8h-launcher-recovery-and-release.md
-- .omx/plans/m8-verification-runbook.md
+- .omx/plans/nous-m8-planning-packagem8-verified-state.md
+- .omx/plans/nous-m8-planning-packageprd-m8-local-nous-application.md
+- .omx/plans/nous-m8-planning-packagem8-shared-contract.md
+- .omx/plans/nous-m8-planning-packagem8-architecture-decision.md
+- .omx/plans/nous-m8-planning-packagem8-core-gap-register.md
+- .omx/plans/nous-m8-planning-packagem8-app-adapter-contract.md
+- .omx/plans/nous-m8-planning-packagem8-ux-and-user-flows.md
+- .omx/plans/nous-m8-planning-packagem8h-launcher-recovery-and-release-plan.md
+- .omx/plans/nous-m8-planning-packagetest-spec-m8h-launcher-recovery-and-release.md
+- .omx/plans/nous-m8-planning-packagem8-verification-runbook.md
 
 Prove this stage's entry gate and baseline before changes. If M7F/current-stage
 prerequisites are unverified, stop with BLOCKED and the smallest missing
